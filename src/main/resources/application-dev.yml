@@ -37,4 +37,4 @@ spring:
 
 logging:
   path: log/
-  file: EtlSupervisor.log
+  file: log/EtlSupervisor.log
