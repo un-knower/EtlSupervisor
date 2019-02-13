@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <!--/*@thymesVar id="pageTitle" type=""*/-->
+    <title th:text="${pageTitle} + '- Etl系统监控平台'"></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta content="leo.jie" name="author"/>
+    <link rel="shortcut icon" th:href="@{/img/favicon.png}"/>
+    <!--引入css文件-->
+    <link th:href="@{/bootstrap3.3.7/css/bootstrap.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/font-awesome4.7.0/css/font-awesome.min.css}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{/bootstrap3.3.7/css/bootstrap-datetimepicker.min.css}" rel="stylesheet" type="text/css"/>
+    <!--引入js文件-->
+    <script th:src="@{/jquery3.2.1/jquery.min.js}" type="text/javascript"></script>
+    <script th:src="@{/js/test.js}" type="text/javascript"></script>
+    <script th:src="@{/bootstrap3.3.7/js/bootstrap.min.js}" type="text/javascript"></script>
+    <script th:src="@{/bootstrap3.3.7/js/bootstrap-datetimepicker.min.js}" type="text/javascript"></script>
+    <script th:src="@{/axios/axios.min.js}" type="text/javascript"></script>
+    <script th:src="@{/echarts/echarts.min.js}" type="text/javascript"></script>
+    <script th:src="@{/vue/vue.min.js}" type="text/javascript"></script>
+
+    <style>
+        body {
+            padding-top: 70px;
+        }
+
+        nav {
+            font-size: 16px;
+        }
+
+        .status {
+            border-radius: 2px;
+            padding: 2px 2px;
+            color: #FFF;
+            text-align: center;
+            margin-top: 2px;
+        }
+
+        .status.INFO {
+            color: #5e5e5e;
+            background-color: #3398cc
+        }
+
+        .status.DANGER {
+            color: #5e5e5e;
+            background-color: #d9534f
+        }
+
+        .status.SUCCESS {
+            color: #5e5e5e;
+            background-color: #5cb85c
+        }
+
+        .status.WARNING {
+            color: #5e5e5e;
+            background-color: #fffd08;
+        }
+
+        .status.ERROR {
+            color: #5e5e5e;
+            background-color: #d9534f;
+        }
+
+        .status.info {
+            color: #5e5e5e;
+            background-color: #3398cc
+        }
+
+        .status.danger {
+            color: #5e5e5e;
+            background-color: #d9534f
+        }
+
+        .status.success {
+            color: #5e5e5e;
+            background-color: #5cb85c
+        }
+
+        .status.warning {
+            color: #5e5e5e;
+            background-color: #fffd08;
+        }
+
+        .status.error {
+            color: #5e5e5e;
+            background-color: #d9534f;
+        }
+    </style>
+</head>

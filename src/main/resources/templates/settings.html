@@ -1,0 +1,265 @@
+<div th:with="pageTitle = '系统设置'" th:include="comm/public/header" xmlns:th="http://www.w3.org/1999/xhtml"></div>
+<body xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:include="comm/public/nav"></div>
+<div id="app">
+    <div class="container">
+        <div class="clearfix">
+            <button type="button" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo"
+                    class="btn btn-info pull-right" style="margin-bottom: 20px; ">搜索
+            </button>
+        </div>
+        <table class="table table-hover table-bordered">
+            <tr>
+                <th>#</th>
+                <th>Execution Id</th>
+                <th>flow</th>
+                <th>Project</th>
+                <th>User</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Elapsed</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            <tr v-for="(list,index) in lists">
+                <td>{{list.id}}</td>
+                <td>{{list.executionId}}</td>
+                <td>{{list.flow}}</td>
+                <td>{{list.project}}</td>
+                <td>{{list.user}}</td>
+                <td>{{list.startTime}}</td>
+                <td>{{list.endTime}}</td>
+                <td>{{list.elapsed}}</td>
+                <td>
+                    <div class="status" :class="bgColorArr[index]">{{list.status}}</div>
+                </td>
+                <td>{{list.action}}</td>
+            </tr>
+        </table>
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li>
+                    <a href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li><a href="#">1</a></li>
+                <li><a href="#">2</a></li>
+                <li><a href="#">3</a></li>
+                <li><a href="#">4</a></li>
+                <li><a href="#">5</a></li>
+                <li>
+                    <a href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("[data-toggle='popover']").popover();
+
+
+    });
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            lists: [
+                {
+                    id: 1,
+                    executionId: 318,
+                    flow: 'updata',
+                    project: 'mike_work',
+                    user: 'Tina',
+                    startTime: '2018-09-27 10:22:22',
+                    endTime: '2018-09-28 10:22:22',
+                    elapsed: '3h 23m 44s',
+                    status: 'Running',
+                    action: '',
+                }, {
+                    id: 2,
+                    executionId: 319,
+                    flow: 'updata',
+                    project: 'mike_work_put',
+                    user: 'Tina',
+                    startTime: '2018-09-27 10:22:22',
+                    endTime: '2018-09-28 10:22:22',
+                    elapsed: '3h 23m 44s',
+                    status: 'Killed',
+                    action: '',
+                }, {
+                    id: 3,
+                    executionId: 320,
+                    flow: 'updata',
+                    project: 'mike_work_table',
+                    user: 'Tina',
+                    startTime: '2018-09-27 10:22:22',
+                    endTime: '2018-09-28 10:22:22',
+                    elapsed: '3h 23m 44s',
+                    status: 'Success',
+                    action: '',
+                }, {
+                    id: 4,
+                    executionId: 321,
+                    flow: 'updata',
+                    project: 'mike_work_put_table',
+                    user: 'Tina',
+                    startTime: '2018-09-27 10:22:22',
+                    endTime: '2018-09-28 10:22:22',
+                    elapsed: '3h 23m 44s',
+                    status: 'Failed',
+                    action: '',
+                }, {
+                    id: 5,
+                    executionId: 322,
+                    flow: 'updata',
+                    project: 'mike_work',
+                    user: 'Tina',
+                    startTime: '2018-09-27 10:22:22',
+                    endTime: '2018-09-28 10:22:22',
+                    elapsed: '3h 23m 44s',
+                    status: 'Running',
+                    action: '',
+                }, {
+                    id: 6,
+                    executionId: 323,
+                    flow: 'updata',
+                    project: 'mike_work_table',
+                    user: 'Tina',
+                    startTime: '2018-09-27 10:22:22',
+                    endTime: '2018-09-28 10:22:22',
+                    elapsed: '3h 23m 44s',
+                    status: 'Killed',
+                    action: '',
+                }, {
+                    id: 7,
+                    executionId: 324,
+                    flow: 'updata',
+                    project: 'mike_work_dim_table',
+                    user: 'Tina',
+                    startTime: '2018-09-27 10:22:22',
+                    endTime: '2018-09-28 10:22:22',
+                    elapsed: '3h 23m 44s',
+                    status: 'Success',
+                    action: '',
+                }, {
+                    id: 8,
+                    executionId: 325,
+                    flow: 'updata',
+                    project: 'mike_work_data_table',
+                    user: 'Tina',
+                    startTime: '2018-09-27 10:22:22',
+                    endTime: '2018-09-28 10:22:22',
+                    elapsed: '3h 23m 44s',
+                    status: 'Failed',
+                    action: '',
+                }, {
+                    id: 9,
+                    executionId: 326,
+                    flow: 'updata',
+                    project: 'mike_work_put_data',
+                    user: 'Tina',
+                    startTime: '2018-09-27 10:22:22',
+                    endTime: '2018-09-28 10:22:22',
+                    elapsed: '3h 23m 44s',
+                    status: 'Success',
+                    action: '',
+                }, {
+                    id: 10,
+                    executionId: 327,
+                    flow: 'updata',
+                    project: 'mike_work',
+                    user: 'Tina',
+                    startTime: '2018-09-27 10:22:22',
+                    endTime: '2018-09-28 10:22:22',
+                    elapsed: '3h 23m 44s',
+                    status: 'Success',
+                    action: '',
+                }, {
+                    id: 11,
+                    executionId: 328,
+                    flow: 'updata',
+                    project: 'mike_work_data',
+                    user: 'Tina',
+                    startTime: '2018-09-27 10:22:22',
+                    endTime: '2018-09-28 10:22:22',
+                    elapsed: '3h 23m 44s',
+                    status: 'Failed',
+                    action: '',
+                }, {
+                    id: 12,
+                    executionId: 329,
+                    flow: 'updata',
+                    project: 'mike_work_put_table',
+                    user: 'Tina',
+                    startTime: '2018-09-27 10:22:22',
+                    endTime: '2018-09-28 10:22:22',
+                    elapsed: '3h 23m 44s',
+                    status: 'Running',
+                    action: '',
+                }, {
+                    id: 13,
+                    executionId: 330,
+                    flow: 'updata',
+                    project: 'mike_work_table',
+                    user: 'Tina',
+                    startTime: '2018-09-27 10:22:22',
+                    endTime: '2018-09-28 10:22:22',
+                    elapsed: '3h 23m 44s',
+                    status: 'Success',
+                    action: '',
+                }, {
+                    id: 14,
+                    executionId: 331,
+                    flow: 'updata',
+                    project: 'mike_work',
+                    user: 'Tina',
+                    startTime: '2018-09-27 10:22:22',
+                    endTime: '2018-09-28 10:22:22',
+                    elapsed: '3h 23m 44s',
+                    status: 'Success',
+                    action: '',
+                }, {
+                    id: 15,
+                    executionId: 332,
+                    flow: 'updata',
+                    project: 'mike_work_put',
+                    user: 'Tina',
+                    startTime: '2018-09-27 10:22:22',
+                    endTime: '2018-09-28 10:22:22',
+                    elapsed: '3h 23m 44s',
+                    status: 'Failed',
+                    action: '',
+                }
+            ],
+            bgColorArr: []
+        },
+        methods: {
+            bgColorFun() {
+                return this.status == 'Running' ? 'run' : (this.status == 'Failed' || this.status == 'Killed' ? 'fai' : 'suc')
+            }
+        },
+        mounted() {
+            this.lists.forEach(element = > {
+                var text = element.status;
+            if (text == "Running") {
+                this.bgColorArr.push("run")
+            } else if (text == "Failed" || text == "Killed") {
+                this.bgColorArr.push("fai")
+            } else if (text == "Success") {
+                this.bgColorArr.push("suc")
+            }
+
+        })
+            ;
+            console.log(this.bgColorArr)
+        }
+    })
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<div th:with="pageTitle = '模板工具'" th:include="comm/public/header" xmlns:th="http://www.w3.org/1999/xhtml"></div>
+<body xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:include="comm/public/nav"></div>
+<div class="container" id="template-app">
+    <div th:include="comm/public/azkaban_template_alert"></div>
+    <div class="row">
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <img style="width: 225px;height: 225px;"
+                     th:src="@{/img/spark.png}" alt="...">
+                <div class="caption">
+                    <h3>spark-shell阿兹卡班job模板</h3>
+                    <p>指定参数，由后台自动生成任务运行的job文件</p>
+                    <p>
+                        <a href="#" class="btn btn-primary" role="button" data-toggle="modal"
+                           data-target="#sparkTemplateModal" data-whatever="@mdo">开始制作</a>
+
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <img style="width: 225px;height: 225px;"
+                     th:src="@{/img/Python.png}" alt="...">
+                <div class="caption">
+                    <h3>python阿兹卡班job模板</h3>
+                    <p>指定参数，由后台自动生成任务运行的job文件</p>
+                    <p>
+                        <a href="#" class="btn btn-primary" role="button" data-toggle="modal"
+                           data-target="#pythonTemplateModal" data-whatever="@mdo">开始制作</a>
+
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <img style="width: 225px;height: 225px;"
+                     th:src="@{/img/Java.png}" alt="...">
+                <div class="caption">
+                    <h3>java阿兹卡班job模板</h3>
+                    <p>指定参数，由后台自动生成任务运行的job文件</p>
+                    <p>
+                        <a href="#" class="btn btn-primary" role="button" data-toggle="modal"
+                           data-target="#javaTemplateModal" data-whatever="@mdo">开始制作</a>
+
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:include="comm/template/sparkTemplateModal"></div>
+    <div th:include="comm/template/pythonTemplateModal"></div>
+    <div th:include="comm/template/javaTemplateModal"></div>
+
+
+</div>
+
+
+<script type="text/javascript">
+    $(function () {
+        $("[data-toggle='popover']").popover();
+    });
+    new Vue({
+        el: "#template-app",
+        data: {
+            msg: '*为必填项，其余项配置则为推荐配置。',
+            sparkCommandForm: {
+                commandType: 'spark.command',
+                projectName: '',
+                jobName: '',
+                driverMemory: 8,
+                executorMemory: 8,
+                executorNums: 10,
+                memoryOverhead: 2048,
+                networkTimeout: 30000,
+                className: '',
+                jarFile: '',
+                jarName: '',
+                jars: '/opt/jar/mysql-connector-java-5.1.32-bin.jar',
+                args: ''
+            }
+        },
+        methods: {
+            getFile(event) {
+                this.sparkCommandForm.jarFile = event.target.files[0];
+            },
+            saveSparkShellCommand() {
+                console.log(this.sparkCommandForm.args)
+                // console.log(this.sparkCommandForm.jarFile);
+                const url = "/api/templates/sparkCommand/add";
+                const this_ = this;
+                let formData = new FormData();
+                formData.append("commandType", this.sparkCommandForm.commandType);
+                formData.append("projectName", this.sparkCommandForm.projectName);
+                formData.append("jobName", this.sparkCommandForm.jobName);
+                formData.append("driverMemory", this.sparkCommandForm.driverMemory);
+                formData.append("executorMemory", this.sparkCommandForm.executorMemory);
+                formData.append("executorNums", this.sparkCommandForm.executorNums);
+                formData.append("memoryOverhead", this.sparkCommandForm.memoryOverhead);
+                formData.append("networkTimeout", this.sparkCommandForm.networkTimeout);
+                formData.append("jarFile", this.sparkCommandForm.jarFile);
+                formData.append("className", this.sparkCommandForm.className);
+                formData.append("jarName", this.sparkCommandForm.jarName);
+                formData.append("jars", this.sparkCommandForm.jars);
+                formData.append("args", this.sparkCommandForm.args);
+                let config = {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                };
+                axios.post(url, data = formData, config)
+                    .then(function (res) {
+                        const response = res.data;
+                        if (!response.success) {
+                            this_.msg = response.msg
+                        } else {
+                            this_.msg = '保存成功';
+                            this_.sparkCommandForm = {
+                                commandType: 'spark.command',
+                                projectName: '',
+                                jobName: '',
+                                driverMemory: 8,
+                                executorMemory: 8,
+                                executorNums: 10,
+                                memoryOverhead: 2048,
+                                networkTimeout: 30000,
+                                className: '',
+                                jarName: '',
+                                jars: '/opt/jar/mysql-connector-java-5.1.32-bin.jar',
+                                args: ''
+                            }
+                        }
+                    });
+            }
+        }
+    })
+</script>
+</body>
+</html>

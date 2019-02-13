@@ -1,0 +1,31 @@
+<div th:with="pageTitle = '主页'" th:include="comm/public/header" xmlns:th="http://www.w3.org/1999/xhtml"></div>
+<body xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:include="comm/public/nav"></div>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <img style="width: 350px;height: 300px;" th:src="@{/img/pos_analysis.png}" alt="...">
+                <div class="caption">
+                    <h3>日常流水数据趋势图</h3>
+                    <p>用于统计日常清洗流水总数</p>
+                    <p><a href="/pos_analysis" class="btn btn-primary" role="button">查看详情</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+                <img style="width: 350px;height: 300px;" th:src="@{/img/pos_watcher.png}" alt="...">
+                <div class="caption">
+                    <h3>日常流水数据监测图</h3>
+                    <p>用于监测原始最终流水的数据</p>
+                    <p><a href="/pos_watcher" class="btn btn-primary" role="button">查看详情</a></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

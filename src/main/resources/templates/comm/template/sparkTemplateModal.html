@@ -1,0 +1,80 @@
+<!-- 弹出框 -->
+<div class="modal fade" id="sparkTemplateModal" tabindex="-1" role="dialog"
+     aria-labelledby="sparkTemplateModal" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Spark-Shell</h4>
+            </div>
+            <div class="modal-body">
+                <div th:include="comm/public/alert" xmlns:th="http://www.w3.org/1999/xhtml"></div>
+                <form>
+                    <div class="form-group">
+                        <label class="control-label">commandType:</label>
+                        <input type="text" class="form-control" v-model="sparkCommandForm.commandType" disabled/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">*projectName:</label>
+                        <input class="form-control" v-model="sparkCommandForm.projectName" placeholder="job所属项目名称"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">*jobName:</label>
+                        <input type="text" class="form-control" v-model="sparkCommandForm.jobName" placeholder="job名称"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">driverMemory:</label>
+                        <input class="form-control" v-model="sparkCommandForm.driverMemory"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">executorMemory:</label>
+                        <input type="text" class="form-control" v-model="sparkCommandForm.executorMemory"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">executorNums:</label>
+                        <input class="form-control" v-model="sparkCommandForm.executorNums"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">memoryOverhead:</label>
+                        <input type="text" class="form-control" v-model="sparkCommandForm.memoryOverhead"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">networkTimeout:</label>
+                        <input class="form-control" v-model="sparkCommandForm.networkTimeout"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">*jar:</label>
+                        <input type="file" class="form-control" name="file" placeholder="上传程序运行所需的jar包"
+                               @change="getFile($event)"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">*className:</label>
+                        <input type="text" class="form-control" v-model="sparkCommandForm.className"
+                               placeholder="job运行所属主类"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">*jarName:</label>
+                        <input class="form-control" v-model="sparkCommandForm.jarName" placeholder="job运行所属jar包名称"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">--jars:</label>
+                        <textarea class="form-control" v-model="sparkCommandForm.jars"
+                                  placeholder="jar运行所依赖的第三方jar"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">--args:</label>
+                        <textarea class="form-control" v-model="sparkCommandForm.args"
+                                  placeholder="jar运行的main函数参数"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" @click="saveSparkShellCommand()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>

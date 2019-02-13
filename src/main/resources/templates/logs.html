@@ -1,0 +1,174 @@
+<div th:with="pageTitle = '系统日志'" th:include="comm/public/header" xmlns:th="http://www.w3.org/1999/xhtml"></div>
+<body xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:include="comm/public/nav"></div>
+<div id="app">
+    <div class="container">
+        <div class="navbar-form navbar-right">
+            <div class="form-group">
+                <input id="pickDate" type="text" class="form-control" placeholder="选择日期"
+                       v-model="pickDateVal" style="width :300px;margin-bottom: 20px; " readonly>
+
+                <input type="text" class="form-control" placeholder="输入零售商编号\日志类型\日志级别"
+                       style="width :300px;margin-bottom: 20px; " v-model="keyWords">
+            </div>
+            <button type="submit" class="btn btn-info" style="margin-bottom: 20px; " @click="searchFun()">搜 索</button>
+        </div>
+        <table class="table table-hover table-bordered">
+            <tr>
+                <th>日志编号</th>
+                <th>零售商编号</th>
+                <th>日志信息</th>
+                <th>日志级别</th>
+                <th>产生时间</th>
+                <th>日志类型</th>
+                <th>负责人</th>
+            </tr>
+            <tr v-for="(log,index) in logs">
+                <td>{{log.id}}</td>
+                <td>{{log.retailerCode}}</td>
+                <td>{{log.msg}}</td>
+                <td>
+                    <div class="status" :class="log.logLevel">{{log.logLevel}}</div>
+                </td>
+                <td>{{log.logTime}}</td>
+                <td>{{log.logType}}</td>
+                <td>{{log.worker}}</td>
+            </tr>
+        </table>
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li v-show="current != 1" @click="current-- && goto(current--)">
+                    <a href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li v-for="index in pages" @click="goto(index)"
+                    :class="{'active':current == index}" :key="index"><a href="#">{{index}}</a></li>
+                <li v-show="allPage != current && allPage != 0" @click="current++ && goto(current++)">
+                    <a href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function initDate() {
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var day = date.getDate();
+
+        if (month < 10) {
+            month = "0" + month
+        }
+        if (day < 10) {
+            day = "0" + day
+        }
+        return year + "-" + month + "-" + day
+    }
+
+    $(function () {
+        $("[data-toggle='popover']").popover();
+        $('#pickDate').datetimepicker({
+            format: 'yyyy-mm-dd',  //格式  如果只有yyyy-mm-dd那就是0000-00-00
+            autoclose: true,//选择后是否自动关闭
+            minView: 2,//最精准的时间选择为日期  0-分 1-时 2-日 3-月
+            language: 'zh-CN', //中文
+            weekStart: 1, //一周从星期几开始
+            todayBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            forceParse: 0,
+            // daysOfWeekDisabled:"1,2,3", //一周的周几不能选 格式为"1,2,3"  数组格式也行
+            todayBtn: true,  //在底部是否显示今天
+            todayHighlight: false, //今天是否高亮显示
+            keyboardNavigation: true, //方向图标改变日期  必须要有img文件夹 里面存放图标
+            showMeridian: false,  //是否出现 上下午
+            initialDate: new Date(),
+            startDate: "2017-01-01" //日期开始时间 也可以是new Date()只能选择以后的时间
+        })
+            .on("changeDate", function () {
+                this.pickDateVal = $('#pickDate').val();
+            });
+    });
+
+    new Vue({
+        el: '#app',
+        data: {
+            pickDateVal: initDate(),
+            keyWords: '',
+            current: 1,
+            showItem: 15,
+            pageSize: 20,
+            allPage: 0,
+            logs: [
+                {
+                    id: 1,
+                    retailerCode: 318,
+                    msg: '测试信息1',
+                    logLevel: 'SUCCESS',
+                    logTime: '2018-09-27 10:22:22',
+                    logType: 'core',
+                    worker: 'leo'
+                }
+            ],
+            bgColorArr: []
+        },
+        methods: {
+            searchFun() {
+                this.pickDateVal = $('#pickDate').val();
+                this.getLogs(this.keyWords, 1, this.pageSize, this.pickDateVal);
+            },
+            goto: function (index) {
+                var _this = this;
+                if (index === _this.current) return;
+                _this.current = index;
+                _this.getLogs(_this.keyWords, _this.current, _this.pageSize, _this.pickDateVal)
+            },
+            getLogs(keyWords, pageNo, pageSize, pickDate) {
+                var url = "/api/list/logs?pageNo=" + pageNo + "&pageSize=" + pageSize + "&keyWords=" + keyWords +
+                    "&pickDate=" + pickDate;
+                var _this = this;
+                axios.get(url).then(function (res) {
+                    console.log(res.data.payload)
+                    _this.allPage = res.data.payload.totalPages
+                    _this.logs = res.data.payload.rows
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }
+        },
+        computed: {
+            pages: function () {
+                var pag = [];
+                if (this.current < this.showItem) { //如果当前的激活的项 小于要显示的条数
+                    //总页数和要显示的条数那个大就显示多少条
+                    var i = Math.min(this.showItem, this.allPage);
+                    while (i) {
+                        pag.unshift(i--);
+                    }
+                } else { //当前页数大于显示页数了
+                    var middle = this.current - Math.floor(this.showItem / 2),//从哪里开始
+                        i = this.showItem;
+                    if (middle > (this.allPage - this.showItem)) {
+                        middle = (this.allPage - this.showItem) + 1
+                    }
+                    while (i--) {
+                        pag.push(middle++);
+                    }
+                }
+                return pag
+            }
+        },
+        created() {
+            this.getLogs(this.keyWords, 1, this.pageSize, this.pickDateVal);
+        }
+    })
+
+</script>
+</body>
+</html>

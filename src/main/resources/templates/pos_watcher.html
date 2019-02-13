@@ -1,0 +1,237 @@
+<div th:with="pageTitle = '流水监控'" th:include="comm/public/header" xmlns:th="http://www.w3.org/1999/xhtml"></div>
+<body xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:include="comm/public/nav"></div>
+<div id="app" class="container">
+    <div class="btn-group">
+        <button type="button" class="btn btn-primary dropdown-toggle"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {{retailerSelected}} <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li v-for="(retailer,index) in retailerList"><a @click="selectRetailer(retailer)">
+                {{retailer.retailerName}}</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="panel panel-primary" style="margin-top: 20px;">
+        <div class="panel-heading">日常流水数据监控</div>
+        <div class="panel-body">
+            <div id="main" style="width: 100%;height:400px;"></div>
+        </div>
+    </div>
+
+    <div class="panel panel-primary" style="margin-top: 20px;">
+        <div class="panel-heading">日常流水数据监控</div>
+        <div class="panel-body">
+            <div id="main2" style="width: 100%;height:400px;"></div>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript">
+    new Vue({
+        el: '#app',
+        data: {
+            retailerList: [{}],
+            dateList: [],
+            oriPosCountList: [],
+            oriStoreCountList: [],
+            finalPosCountList: [],
+            finalStoreCountList: [],
+            retailerSelected: '美宜佳'
+        },
+        created() {
+            this.initRetailer();
+            this.getPosAnalysisData("R10001");
+        },
+        mounted() {
+            this.drawLine()
+        },
+        methods: {
+            getPosAnalysisData(retailerCode) {
+                const url = "/api/pos/watcher?retailerCode=" +
+                    retailerCode + "&limitDays=" + 40;
+                const _this = this;
+                axios.get(url).then(function (res) {
+                    console.log(res.data.payload);
+                    _this.dateList = res.data.payload.dateList;
+                    _this.oriPosCountList = res.data.payload.oriPosCountList;
+                    _this.oriStoreCountList = res.data.payload.oriStoreCountList;
+                    _this.finalPosCountList = res.data.payload.finalPosCountList;
+                    _this.finalStoreCountList = res.data.payload.finalStoreCountList;
+                    _this.drawLine()
+                }).catch(function (reason) {
+                    console.log(reason)
+                });
+            },
+            selectRetailer(retailer) {
+                this.retailerSelected = retailer.retailerName;
+                this.getPosAnalysisData(retailer.retailerCode)
+            },
+            initRetailer() {
+                const url = "/api/retailer/list/config";
+                const _this = this;
+                _this.retailerList = [];
+                axios.get(url).then(function (res) {
+                    console.log(res);
+                    _this.retailerList = res.data.payload.etlRetailerConfigList;
+                }).catch(function (reason) {
+                    console.log(reason)
+                });
+            },
+            drawLine() {
+                // 基于准备好的dom，初始化echarts实例
+                let myChart = echarts.init(document.getElementById('main'));
+                let myChart2 = echarts.init(document.getElementById('main2'));
+
+                myChart.setOption({
+                    title: {
+                        text: '日常流水数据监测'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            label: {
+                                backgroundColor: '#6a7985'
+                            }
+                        }
+                    },
+                    legend: {
+                        data: ['原始流水', "最终流水"]
+                    },
+                    toolbox: {
+                        left: 'right',
+                        feature: {
+                            dataZoom: {
+                                yAxisIndex: 'none'
+                            },
+                            restore: {},
+                            saveAsImage: {}
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: this.dateList,
+                            axisLabel: {
+                                interval: 0,
+                                rotate: 20,
+                                margin: 2
+                            }
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value'
+                        }
+                    ],
+                    dataZoom: [
+                        {
+                            start: 50,
+                            end: 100,
+                            type: 'slider'
+                        }
+                    ],
+                    series: [{
+                        name: '原始流水',
+                        type: 'line',
+                        data: this.oriPosCountList
+                    },
+
+                        {
+                            name: '最终流水',
+                            type: 'line',
+                            stack: '总量',
+                            label: {
+                                normal: {
+                                    show: true,
+                                    position: 'top'
+                                }
+                            },
+                            data: this.finalPosCountList
+                        }]
+                });
+                myChart2.setOption({
+                    title: {
+                        text: '日常流水数据监测'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            label: {
+                                backgroundColor: '#6a7985'
+                            }
+                        }
+                    },
+                    legend: {
+                        data: ['原始流水中的店铺', "最终流水中的店铺"]
+                    },
+                    toolbox: {
+                        left: 'right',
+                        feature: {
+                            dataZoom: {
+                                yAxisIndex: 'none'
+                            },
+                            restore: {},
+                            saveAsImage: {}
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: this.dateList,
+                            axisLabel: {
+                                interval: 0,
+                                rotate: 20,
+                                margin: 2
+                            }
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value'
+                        }
+                    ],
+                    dataZoom: [
+                        {
+                            start: 50,
+                            end: 100,
+                            type: 'slider'
+                        }
+                    ],
+                    series: [
+                        {
+                            name: '原始流水中的店铺',
+                            type: 'line',
+                            data: this.oriStoreCountList
+                        },
+                        {
+                            name: '最终流水中的店铺',
+                            type: 'line',
+                            data: this.finalStoreCountList
+                        }]
+                })
+
+            }
+        }
+    });
+</script>
+</body>
+</html>
