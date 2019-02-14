@@ -25,10 +25,6 @@ public class EtlSystemLogServiceImpl implements EtlSystemLogService {
     @Resource
     private EtlSystemLogRepository logRepository;
 
-    public EtlSystemLogServiceImpl(EtlSystemLogRepository logRepository) {
-        this.logRepository = logRepository;
-    }
-
     @Override
     public Page<EtlSystemLog> findAllLogs(EtlLogQueryParams queryParams) {
         final int currentPageNo = queryParams.getPageNo() > 0 ? queryParams.getPageNo() - 1 : 0;

@@ -64,7 +64,7 @@
                 const _this = this;
                 axios.get(url).then(function (res) {
                     console.log(res);
-                    _this.retailerList = res.data.payload.etlRetailerConfigList;
+                    _this.retailerList = res.data.payload;
                 }).catch(function (reason) {
                     console.log(reason)
                 });
