@@ -31,7 +31,8 @@ public class EtlSystemLogServiceImpl implements EtlSystemLogService {
 
     @Override
     public Page<EtlSystemLog> findAllLogs(EtlLogQueryParams queryParams) {
-        Pageable pageable = PageRequest.of(queryParams.getPageNo(), queryParams.getPageSize(), Sort.Direction.ASC, "id");
+        final int currentPageNo = queryParams.getPageNo() > 0 ? queryParams.getPageNo() - 1 : 0;
+        Pageable pageable = PageRequest.of(currentPageNo, queryParams.getPageSize(), Sort.Direction.ASC, "id");
         Specification<EtlSystemLog> specification = (Specification<EtlSystemLog>) (root, query, criteriaBuilder) -> {
 
             Predicate p1 = criteriaBuilder.gt(root.get("id"), 0);

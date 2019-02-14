@@ -30,6 +30,7 @@
             dateList: [],
             usefulCountList: [],
             notUsefulCountList: [],
+            finalPosCountList: [],
             retailerSelected: '请选择零售商'
         },
         created() {
@@ -41,13 +42,14 @@
         },
         methods: {
             getPosAnalysisData(retailerCode) {
-                const url = "/api/pos/list/analysis?retailerCode=" + retailerCode;
+                const url = "/api/v1/pos/showAllAnalysis?retailerCode=" + retailerCode;
                 const _this = this;
                 axios.get(url).then(function (res) {
                     console.log(res.data.payload);
                     _this.dateList = res.data.payload.dateList;
                     _this.usefulCountList = res.data.payload.usefulCountList;
                     _this.notUsefulCountList = res.data.payload.notUsefulCountList;
+                    _this.finalPosCountList = res.data.payload.finalPosCountList
                     _this.drawLine()
                 }).catch(function (reason) {
                     console.log(reason)
@@ -84,7 +86,7 @@
                         }
                     },
                     legend: {
-                        data: ['有效流水', '无效流水']
+                        data: ['有效流水', '无效流水', '最终流水']
                     },
                     toolbox: {
                         left: 'right',
@@ -141,6 +143,15 @@
                             }
                         },
                         data: this.usefulCountList
+                    }, {
+                        name: '最终流水',
+                        type: 'line',
+                        label: {
+                            normal: {
+                                show: true
+                            }
+                        },
+                        data: this.finalPosCountList
                     }]
                 })
             }
