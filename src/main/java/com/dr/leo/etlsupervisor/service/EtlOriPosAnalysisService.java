@@ -13,7 +13,8 @@ public interface EtlOriPosAnalysisService {
     /**
      * 展示所有流水分析
      *
+     * @param retailerCode 零售商code
      * @return 所有流水分析结果
      */
-    List<EtlOriPosAnalysis> showAllPosAnalysis();
+    List<EtlOriPosAnalysis> showAllPosAnalysisOfRetailer(String retailerCode);
 }

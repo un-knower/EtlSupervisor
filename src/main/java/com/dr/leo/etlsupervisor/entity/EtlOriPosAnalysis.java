@@ -25,8 +25,17 @@ public class EtlOriPosAnalysis implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date realDataDay;
     private String tag;
-    private Integer totalFlowCount;
-    private Integer totalFlowNoCount;
-    private Float totalQuantity;
-    private Float totalAmount;
+    private Integer totalFlowCount = 0;
+    private Integer totalFlowNoCount = 0;
+    private Float totalQuantity = 0.0f;
+    private Float totalAmount = 0.0f;
+
+    public EtlOriPosAnalysis() {
+    }
+
+    public EtlOriPosAnalysis(String retailerCode, Date realDataDay, String tag) {
+        this.retailerCode = retailerCode;
+        this.realDataDay = realDataDay;
+        this.tag = tag;
+    }
 }
