@@ -21,17 +21,20 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: true
+    show-sql: false
     database-platform: org.hibernate.dialect.MySQL5Dialect
     open-in-view: true
   output:
     ansi:
       enabled: detect
-  mvc:
-    static-path-pattern: /static/**
   thymeleaf:
     cache: true
     mode: HTML
+  mvc:
+    static-path-pattern: /**
+    favicon:
+      enabled: true
+
 logging:
   path: log/
-  file: EtlSupervisor.log
+  file: log/EtlSupervisor.log

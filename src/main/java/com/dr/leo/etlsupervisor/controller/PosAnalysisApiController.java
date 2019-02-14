@@ -46,6 +46,8 @@ public class PosAnalysisApiController {
         List<Integer> notUsefulCountList = new ArrayList<>();
         List<Integer> finalPosCountList = new ArrayList<>();
         Collections.sort(dateList);
+        dateList = dateList.subList(dateList.size() - 30, dateList.size() - 1);
+
         dateList.forEach(date -> {
             List<EtlOriPosAnalysis> etlOriPosAnalyses = allPosAnalysisOfRetailerMap.get(date);
             etlOriPosAnalyses.forEach(posAnalysis -> {
