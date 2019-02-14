@@ -91,7 +91,7 @@
             saveSparkShellCommand() {
                 console.log(this.sparkCommandForm.args)
                 // console.log(this.sparkCommandForm.jarFile);
-                const url = "/api/templates/sparkCommand/add";
+                const url = "/api/v1/templates/sparkCommand/add";
                 const this_ = this;
                 let formData = new FormData();
                 formData.append("commandType", this.sparkCommandForm.commandType);
@@ -115,8 +115,9 @@
                 axios.post(url, data = formData, config)
                     .then(function (res) {
                         const response = res.data;
+                        console.log(response);
                         if (!response.success) {
-                            this_.msg = response.msg
+                            this_.msg = response.payload
                         } else {
                             this_.msg = '保存成功';
                             this_.sparkCommandForm = {

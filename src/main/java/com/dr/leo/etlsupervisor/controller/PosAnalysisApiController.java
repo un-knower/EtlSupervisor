@@ -4,11 +4,11 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.dr.leo.etlsupervisor.common.RestResponseResult;
 import com.dr.leo.etlsupervisor.entity.EtlOriPosAnalysis;
 import com.dr.leo.etlsupervisor.service.impl.EtlOriPosAnalysisServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,16 +23,12 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/pos")
 public class PosAnalysisApiController {
-    private final EtlOriPosAnalysisServiceImpl posAnalysisService;
+    @Resource
+    private EtlOriPosAnalysisServiceImpl posAnalysisService;
     private final static String USEFUL_POS_TAG = "1";
     private final static String NOT_USEFUL_POS_TAG = "0";
     private final static String FINAL_POS_TAG = "2";
     private final static int POS_ANALYSIS_LIMIT = 30;
-
-    @Autowired
-    public PosAnalysisApiController(EtlOriPosAnalysisServiceImpl posAnalysisService) {
-        this.posAnalysisService = posAnalysisService;
-    }
 
     @GetMapping("/showAllAnalysis")
     public RestResponseResult showAllAnalysis(String retailerCode) {

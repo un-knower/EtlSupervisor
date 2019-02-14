@@ -2,10 +2,11 @@ package com.dr.leo.etlsupervisor.controller;
 
 import com.dr.leo.etlsupervisor.common.RestResponseResult;
 import com.dr.leo.etlsupervisor.service.impl.EtlRetailerConfigServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
 
 /**
  * @author :leo.jie
@@ -15,12 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/retailer")
 public class RetailerConfigApiController {
-    private final EtlRetailerConfigServiceImpl retailerConfigService;
-
-    @Autowired
-    public RetailerConfigApiController(EtlRetailerConfigServiceImpl retailerConfigService) {
-        this.retailerConfigService = retailerConfigService;
-    }
+    @Resource
+    private EtlRetailerConfigServiceImpl retailerConfigService;
 
     @GetMapping("/list/config")
     public RestResponseResult allRetailerConfig() {
