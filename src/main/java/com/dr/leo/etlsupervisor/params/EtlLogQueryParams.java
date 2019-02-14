@@ -2,6 +2,9 @@ package com.dr.leo.etlsupervisor.params;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 /**
  * @author :leo.jie
  * @version :v1.0
@@ -13,4 +16,14 @@ public class EtlLogQueryParams {
     private String keyWords;
     private Integer pageNo;
     private Integer pageSize;
+
+    public LocalDateTime getPickDateTimeStart() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return LocalDateTime.parse(this.pickDate + " 00:00:00", formatter);
+    }
+
+    public LocalDateTime getPickDateTimeEnd() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return LocalDateTime.parse(this.pickDate + " 23:59:59", formatter);
+    }
 }

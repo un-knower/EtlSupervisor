@@ -35,7 +35,11 @@ public class EtlSystemLogServiceImpl implements EtlSystemLogService {
         Specification<EtlSystemLog> specification = (Specification<EtlSystemLog>) (root, query, criteriaBuilder) -> {
 
             Predicate p1 = criteriaBuilder.gt(root.get("id"), 0);
-            Predicate p2 = criteriaBuilder.like(root.get("logTime"), queryParams.getPickDate() + "%");
+            Predicate p2 = null;
+            if (StrUtil.isNotBlank(queryParams.getPickDate())) {
+                p2 = criteriaBuilder.between(root.get("logTime"),
+                        queryParams.getPickDateTimeStart(), queryParams.getPickDateTimeEnd());
+            }
             Predicate p3 = criteriaBuilder.equal(root.get("retailerCode"), queryParams.getKeyWords());
             Predicate p4 = criteriaBuilder.like(root.get("logLevel"), queryParams.getKeyWords());
             Predicate p5 = criteriaBuilder.like(root.get("logType"), "%" + queryParams.getKeyWords() + "%");
@@ -47,7 +51,7 @@ public class EtlSystemLogServiceImpl implements EtlSystemLogService {
             } else if (StrUtil.isNotBlank(queryParams.getKeyWords()) && StrUtil.isBlank(queryParams.getPickDate())) {
                 query.where(criteriaBuilder.or(p3, p4, p5));
             } else {
-                query.where(p2).where(criteriaBuilder.or(p3, p4, p5));
+                query.where(criteriaBuilder.and(p2), criteriaBuilder.or(p3, p4, p5));
             }
             return query.getRestriction();
         };
