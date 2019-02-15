@@ -1,5 +1,6 @@
 package com.dr.leo.etlsupervisor;
 
+import com.dr.leo.etlsupervisor.service.MailServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ public class EtlSupervisorApplicationTests {
     @Autowired
     private TemplateEngine templateEngine;
 
+    @Autowired
+    private MailServiceImpl mailService;
+
     @Test
     public void contextLoads() {
         Context context = new Context();
@@ -23,6 +27,15 @@ public class EtlSupervisorApplicationTests {
         user.setName("leo");
         context.setVariable("user", user);
         System.out.println(templateEngine.process("plugin/test", context));
+    }
+
+    @Test
+    public void testSendEmail() {
+        try {
+            mailService.sendHtmlMail("邮件内容");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

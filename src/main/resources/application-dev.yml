@@ -35,7 +35,22 @@ spring:
     static-path-pattern: /**
     favicon:
       enabled: true
-
+  mail:
+    host: smtp.mxhichina.com
+    port: 465
+    username: leo.jie@datarealglobal.com
+    password: Yyf5211314
+    protocol: smtp
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+        starttls:
+          enable: true
+          required: true
 logging:
   path: log/
   file: log/EtlSupervisor.log
