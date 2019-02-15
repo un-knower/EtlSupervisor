@@ -15,7 +15,7 @@ public class IndexPageController {
         return "404";
     }
 
-    @GetMapping(value = {"/", "index"})
+    @GetMapping(value = {"/", "/index"})
     public String index() {
         return "index";
     }
