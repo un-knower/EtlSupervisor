@@ -2,6 +2,7 @@ server:
   port: 8888
   servlet:
     context-path: /
+
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
