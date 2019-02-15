@@ -4,12 +4,11 @@ import com.dr.leo.etlsupervisor.common.RestResponseResult;
 import com.dr.leo.etlsupervisor.entity.EtlSystemLog;
 import com.dr.leo.etlsupervisor.params.EtlLogQueryParams;
 import com.dr.leo.etlsupervisor.service.impl.EtlSystemLogServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.annotation.Resource;
 
 /**
  * @author :leo.jie
@@ -19,8 +18,12 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("/api/v1/logs")
 public class LogApiController {
-    @Resource
-    private EtlSystemLogServiceImpl logService;
+    private final EtlSystemLogServiceImpl logService;
+
+    @Autowired
+    public LogApiController(EtlSystemLogServiceImpl logService) {
+        this.logService = logService;
+    }
 
     @GetMapping("/showAllLogs")
     public RestResponseResult showAllLogs(EtlLogQueryParams params) {

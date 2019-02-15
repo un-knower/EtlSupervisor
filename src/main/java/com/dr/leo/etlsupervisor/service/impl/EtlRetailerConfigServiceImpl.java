@@ -3,9 +3,9 @@ package com.dr.leo.etlsupervisor.service.impl;
 import com.dr.leo.etlsupervisor.entity.EtlRetailerConfig;
 import com.dr.leo.etlsupervisor.repository.EtlRetailerConfigRepository;
 import com.dr.leo.etlsupervisor.service.EtlRetailerConfigService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -16,8 +16,12 @@ import java.util.List;
 @Service
 public class EtlRetailerConfigServiceImpl implements EtlRetailerConfigService {
 
-    @Resource
-    private EtlRetailerConfigRepository retailerConfigRepository;
+    private final EtlRetailerConfigRepository retailerConfigRepository;
+
+    @Autowired
+    public EtlRetailerConfigServiceImpl(EtlRetailerConfigRepository retailerConfigRepository) {
+        this.retailerConfigRepository = retailerConfigRepository;
+    }
 
     @Override
     public List<EtlRetailerConfig> showAllRetailerConfig() {

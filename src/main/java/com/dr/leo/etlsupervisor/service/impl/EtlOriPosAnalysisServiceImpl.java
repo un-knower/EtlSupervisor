@@ -6,9 +6,9 @@ import cn.hutool.core.date.DateUtil;
 import com.dr.leo.etlsupervisor.entity.EtlOriPosAnalysis;
 import com.dr.leo.etlsupervisor.repository.EtlOriPosAnalysisRepository;
 import com.dr.leo.etlsupervisor.service.EtlOriPosAnalysisService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,8 +24,12 @@ import java.util.stream.Collectors;
 public class EtlOriPosAnalysisServiceImpl implements EtlOriPosAnalysisService {
     private static final int TOTAL_ANALYSIS_NUM = 3;
     private static final List<String> TAGS_OF_ORI = CollectionUtil.newArrayList("1", "0", "2");
-    @Resource
-    private EtlOriPosAnalysisRepository posAnalysisRepository;
+    private final EtlOriPosAnalysisRepository posAnalysisRepository;
+
+    @Autowired
+    public EtlOriPosAnalysisServiceImpl(EtlOriPosAnalysisRepository posAnalysisRepository) {
+        this.posAnalysisRepository = posAnalysisRepository;
+    }
 
     @Override
     public List<EtlOriPosAnalysis> showAllPosAnalysisOfRetailer(String retailerCode) {
