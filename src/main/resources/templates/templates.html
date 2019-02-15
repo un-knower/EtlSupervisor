@@ -72,6 +72,7 @@
                 commandType: 'spark.command',
                 projectName: '',
                 jobName: '',
+                dependenciesJobName: '',
                 driverMemory: 8,
                 executorMemory: 8,
                 executorNums: 10,
@@ -97,6 +98,7 @@
                 formData.append("commandType", this.sparkCommandForm.commandType);
                 formData.append("projectName", this.sparkCommandForm.projectName);
                 formData.append("jobName", this.sparkCommandForm.jobName);
+                formData.append("dependenciesJobName", this.sparkCommandForm.dependenciesJobName)
                 formData.append("driverMemory", this.sparkCommandForm.driverMemory);
                 formData.append("executorMemory", this.sparkCommandForm.executorMemory);
                 formData.append("executorNums", this.sparkCommandForm.executorNums);
@@ -124,6 +126,7 @@
                                 commandType: 'spark.command',
                                 projectName: '',
                                 jobName: '',
+                                dependenciesJobName:'',
                                 driverMemory: 8,
                                 executorMemory: 8,
                                 executorNums: 10,

@@ -27,6 +27,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public RestResponseResult<String> exceptionHandler(Exception e) {
         logger.error(e.getMessage());
+        e.printStackTrace();
         return RestResponseResult.failed("你把系统玩炸了，开发人员正在火速救场！");
     }
 

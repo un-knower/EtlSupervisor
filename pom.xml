@@ -22,8 +22,9 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <HikariCP.version>3.1.0</HikariCP.version>
+        <!--<thymeleaf.version>3.0.2.RELEASE</thymeleaf.version>-->
         <!--以下两项需要如果不配置，解析themleaf 会有问题-->
-        <!-- <thymeleaf.version>3.0.2.RELEASE</thymeleaf.version>
+        <!--
          <thymeleaf-layout-dialect.version>2.1.1</thymeleaf-layout-dialect.version>-->
     </properties>
 
@@ -72,6 +73,12 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-core</artifactId>
             <version>4.1.19</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>21.0</version>
         </dependency>
 
     </dependencies>

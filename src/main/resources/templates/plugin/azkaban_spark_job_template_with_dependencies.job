@@ -1,0 +1,3 @@
+type=command
+command=spark-submit --master yarn --deploy-mode cluster --driver-memory [[${azkabanCommand.driverMemory}]]G --executor-memory [[${azkabanCommand.executorMemory}]]g --num-executors [[${azkabanCommand.executorNums}]] --conf spark.yarn.executor.memoryOverhead=[[${azkabanCommand.memoryOverhead}]] --conf spark.network.timeout=[[${azkabanCommand.networkTimeout}]] --jars [[${azkabanCommand.jars}]] --class [[${azkabanCommand.className}]] [[${azkabanCommand.jarName}]] [[${azkabanCommand.args}]]
+dependencies=[[${azkabanCommand.dependenciesJobName}]]

@@ -1,5 +1,6 @@
 package com.dr.leo.etlsupervisor.controller;
 
+import com.dr.leo.etlsupervisor.azkaban.AzkabanSparkCommand;
 import com.dr.leo.etlsupervisor.common.RestResponseResult;
 import com.dr.leo.etlsupervisor.params.AzkabanSparkCommandParams;
 import org.springframework.validation.annotation.Validated;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.annotation.Resource;
+
 /**
  * @author :leo.jie
  * @version :v1.0
@@ -17,17 +20,20 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 @RestController
 @RequestMapping("/api/v1/templates")
 public class TemplatesApiController {
+    @Resource
+    private AzkabanSparkCommand sparkCommand;
+
     @PostMapping("/sparkCommand/add")
     public RestResponseResult addSparkJobTemplate(@Validated AzkabanSparkCommandParams sparkCommandParams,
-                                                  MultipartHttpServletRequest jarFile/*, BindingResult result*/) {
-
+                                                  MultipartHttpServletRequest jarFile) {
         MultipartFile putCommandFile = jarFile.getFile("jarFile");
         if (null != putCommandFile) {
             String putFileName = putCommandFile.getOriginalFilename();
             System.out.println(putFileName);
         }
-        //TODO 模板文件上传控制器
-        //try(FileOutputStream os = new FileOutputStream())
+        AzkabanSparkCommand azkabanSparkCommand = sparkCommandParams.convertTo();
+        sparkCommand.outTemplate(azkabanSparkCommand);
+
         return RestResponseResult.ok();
     }
 }

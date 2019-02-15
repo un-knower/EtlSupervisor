@@ -1,9 +1,12 @@
 package com.dr.leo.etlsupervisor.params;
 
+import cn.hutool.core.bean.BeanUtil;
+import com.dr.leo.etlsupervisor.azkaban.AzkabanSparkCommand;
 import com.dr.leo.etlsupervisor.params.valid.First;
 import com.dr.leo.etlsupervisor.params.valid.Fourth;
 import com.dr.leo.etlsupervisor.params.valid.Second;
 import com.dr.leo.etlsupervisor.params.valid.Third;
+import com.google.common.base.Converter;
 import lombok.Data;
 
 import javax.validation.GroupSequence;
@@ -22,6 +25,7 @@ public class AzkabanSparkCommandParams {
     private String projectName;
     @NotBlank(message = "job/任务名称不能为空！", groups = {Second.class})
     private String jobName;
+    private String dependenciesJobName;
     private int driverMemory;
     private int executorMemory;
     private int executorNums;
@@ -33,4 +37,23 @@ public class AzkabanSparkCommandParams {
     private String jarName;
     private String jars;
     private String args;
+
+    public AzkabanSparkCommand convertTo() {
+        AzkabanSparkCommandConvert sparkCommandConvert = new AzkabanSparkCommandConvert();
+        return sparkCommandConvert.convert(this);
+    }
+
+    private static class AzkabanSparkCommandConvert extends Converter<AzkabanSparkCommandParams, AzkabanSparkCommand> {
+        @Override
+        protected AzkabanSparkCommand doForward(AzkabanSparkCommandParams sparkCommandParams) {
+            AzkabanSparkCommand azkabanCommand = new AzkabanSparkCommand();
+            BeanUtil.copyProperties(sparkCommandParams, azkabanCommand);
+            return azkabanCommand;
+        }
+
+        @Override
+        protected AzkabanSparkCommandParams doBackward(AzkabanSparkCommand azkabanSparkCommand) {
+            throw new AssertionError("不可逆向转换！");
+        }
+    }
 }

@@ -30,6 +30,7 @@ spring:
   thymeleaf:
     cache: false
     mode: HTML
+    suffix: .html
   mvc:
     static-path-pattern: /**
     favicon:
