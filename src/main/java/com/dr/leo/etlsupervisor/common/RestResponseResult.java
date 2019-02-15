@@ -14,7 +14,7 @@ public class RestResponseResult<T> implements Serializable {
     private boolean success;
     private int code = 200;
     private String msg;
-    private long timestamp = DateUtil.nowTimeStamp();
+    private long timestamp = DateKit.nowTimeStamp();
     private T payload;
 
     public RestResponseResult() {

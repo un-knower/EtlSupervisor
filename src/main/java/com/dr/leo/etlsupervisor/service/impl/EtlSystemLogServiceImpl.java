@@ -1,6 +1,7 @@
 package com.dr.leo.etlsupervisor.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.dr.leo.etlsupervisor.common.DateKit;
 import com.dr.leo.etlsupervisor.entity.EtlSystemLog;
 import com.dr.leo.etlsupervisor.params.EtlLogQueryParams;
 import com.dr.leo.etlsupervisor.repository.EtlSystemLogRepository;
@@ -14,6 +15,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author :leo.jie
@@ -57,5 +60,21 @@ public class EtlSystemLogServiceImpl implements EtlSystemLogService {
             return query.getRestriction();
         };
         return logRepository.findAll(specification, pageable);
+    }
+
+    @Override
+    public String logContentOfOneLevelAfterOneDate(String logLevel, LocalDateTime dateTime) {
+        List<EtlSystemLog> logList = logRepository.findAllByLogLevelAndLogTimeAfter(logLevel, dateTime);
+        if (logList.isEmpty()) {
+            return "";
+        }
+        StringBuilder content = new StringBuilder();
+        logList.forEach(etlSystemLog -> content.append(etlSystemLog.getRetailerCode())
+                .append("\t").append(etlSystemLog.getMsg())
+                .append("\t").append(etlSystemLog.getLogLevel())
+                .append("\t").append(etlSystemLog.getLogType())
+                .append("\t").append(DateKit.toDateTimeStr(etlSystemLog.getLogTime()))
+                .append("\t").append(etlSystemLog.getWorker()).append("\n"));
+        return content.toString();
     }
 }

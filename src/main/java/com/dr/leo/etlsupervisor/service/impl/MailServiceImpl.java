@@ -1,8 +1,9 @@
-package com.dr.leo.etlsupervisor.service;
+package com.dr.leo.etlsupervisor.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.dr.leo.etlsupervisor.config.EmailConfig;
 import com.dr.leo.etlsupervisor.exception.ServiceException;
+import com.dr.leo.etlsupervisor.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

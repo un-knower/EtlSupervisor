@@ -4,6 +4,8 @@ import com.dr.leo.etlsupervisor.entity.EtlSystemLog;
 import com.dr.leo.etlsupervisor.params.EtlLogQueryParams;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDateTime;
+
 /**
  * @author :leo.jie
  * @version :v1.0
@@ -17,4 +19,13 @@ public interface EtlSystemLogService {
      * @return 查询结果
      */
     Page<EtlSystemLog> findAllLogs(EtlLogQueryParams queryParams);
+
+    /**
+     * 查询某一日期之后，某一级别的所有日志内容
+     *
+     * @param logLevel 日志级别
+     * @param localDateTime     日期
+     * @return 日志内容
+     */
+    String logContentOfOneLevelAfterOneDate(String logLevel, LocalDateTime localDateTime);
 }
