@@ -26,8 +26,7 @@ public class EmailSendTask extends QuartzJobBean {
 
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        System.out.println("任务开始！");
-        String dangerLogContent = logService.logContentOfOneLevelAfterOneDate(LogLevelEnum.DANGER.getLogLevel(),
+        String dangerLogContent = logService.logContentOfOneLevelAfterOneDate(LogLevelEnum.WARN.getLogLevel(),
                 DateKit.toLocalDateTime(DateKit.yesterday() + " 00:00:00"));
         if (StrUtil.isBlank(dangerLogContent)) {
             return;
@@ -38,6 +37,5 @@ public class EmailSendTask extends QuartzJobBean {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("任务结束");
     }
 }

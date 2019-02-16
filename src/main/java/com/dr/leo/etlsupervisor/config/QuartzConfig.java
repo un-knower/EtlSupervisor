@@ -21,7 +21,7 @@ public class QuartzConfig {
 
     @Bean
     public Trigger emailSendTrigger() {
-        CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule("0 */5 * * * ?");
+        CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule("0 0 10,14,18 * * ?");
         return TriggerBuilder.newTrigger().forJob(emailSendTaskDetail())
                 .withIdentity("emailSendTask")
                 .withSchedule(scheduleBuilder)

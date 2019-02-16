@@ -3,6 +3,18 @@ server:
   servlet:
     context-path: /
 spring:
+  quartz:
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: EtlSupervisorScheduler
+            instanceId: AUTO
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 10
+            threadPriority: 5
+            threadsInheritContextClassLoaderOfInitializingThread: true
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://192.168.1.41:3306/etl_db?useUnicode=true&characterEncoding=utf-8&useSSL=false
@@ -34,7 +46,22 @@ spring:
     static-path-pattern: /**
     favicon:
       enabled: true
-
+  mail:
+    host: smtp.mxhichina.com
+    port: 465
+    username: leo.jie@datarealglobal.com
+    password: Yyf5211314
+    protocol: smtp
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+        starttls:
+          enable: true
+          required: true
 logging:
   path: log/
   file: log/EtlSupervisor.log
