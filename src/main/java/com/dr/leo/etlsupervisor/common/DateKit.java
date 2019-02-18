@@ -31,6 +31,4 @@ public class DateKit {
         DateTimeFormatter df = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
         return df.format(dateTime);
     }
-
-
 }
