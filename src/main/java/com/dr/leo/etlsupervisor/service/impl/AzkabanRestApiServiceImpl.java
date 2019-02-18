@@ -1,5 +1,6 @@
 package com.dr.leo.etlsupervisor.service.impl;
 
+import com.dr.leo.etlsupervisor.azkaban.model.AzkabanFlowGraph;
 import com.dr.leo.etlsupervisor.azkaban.model.AzkabanProject;
 import com.dr.leo.etlsupervisor.config.AzkabanConfig;
 import com.dr.leo.etlsupervisor.entity.EtlAzkabanSession;
@@ -214,6 +215,24 @@ public class AzkabanRestApiServiceImpl {
         String res = exchange.getBody();
         Gson gson = new Gson();
         return gson.fromJson(res, AzkabanProject.class);
+    }
+
+    public AzkabanFlowGraph fetchJobsOfOneFlow(String sessionId, String project, String flow) {
+        disableSslVerification();
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders hs = getHttpHeaders();
+        hs.add("Accept", "text/plain;charset=utf-8");
+        Map<String, String> params = new HashMap<>(3);
+        params.put("id", sessionId);
+        params.put("project", project);
+        params.put("flow", flow);
+        ResponseEntity<String> exchange = restTemplate
+                .exchange(azkabanConfig.getUrl() + "/manager?session.id={id}&ajax=fetchflowgraph&" +
+                                "project={project}&flow={flow}", HttpMethod.GET,
+                        new HttpEntity<String>(hs), String.class, params);
+        String res = exchange.getBody();
+        Gson gson = new Gson();
+        return gson.fromJson(res, AzkabanFlowGraph.class);
     }
 
 }

@@ -2,6 +2,7 @@ package com.dr.leo.etlsupervisor.controller;
 
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
+import com.dr.leo.etlsupervisor.azkaban.model.AzkabanFlowGraph;
 import com.dr.leo.etlsupervisor.azkaban.model.AzkabanProject;
 import com.dr.leo.etlsupervisor.common.RestResponseResult;
 import com.dr.leo.etlsupervisor.exception.ServiceException;
@@ -39,6 +40,24 @@ public class AzkabanApiController {
             }
             Map<String, AzkabanProject> data = MapUtil.newHashMap(1);
             data.put("azkabanProject", azkabanProject);
+            return RestResponseResult.ok(data);
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+        return RestResponseResult.ok();
+    }
+
+
+    @GetMapping("/fetch/jobs")
+    public RestResponseResult fetchJobsOfOneFlow(String project, String flow) {
+        try {
+            String sessionId = azkabanRestApiService.getAzkabanSessionId();
+            AzkabanFlowGraph azkabanFlowGraph = azkabanRestApiService.fetchJobsOfOneFlow(sessionId, project, flow);
+            if (StrUtil.isNotBlank(azkabanFlowGraph.getError())) {
+                return RestResponseResult.failed().message(azkabanFlowGraph.getError());
+            }
+            Map<String, AzkabanFlowGraph> data = MapUtil.newHashMap(1);
+            data.put("azkabanFlowGraph", azkabanFlowGraph);
             return RestResponseResult.ok(data);
         } catch (ServiceException e) {
             e.printStackTrace();
