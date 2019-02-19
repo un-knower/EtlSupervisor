@@ -47,7 +47,7 @@ spring:
   mvc:
     static-path-pattern: /**
     favicon:
-      enabled: true
+      enabled: false
   mail:
     host: smtp.mxhichina.com
     port: 465
