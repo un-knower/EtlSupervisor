@@ -6,7 +6,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.1.2.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
     <groupId>com.dr.leo</groupId>
     <artifactId>etlsupervisor</artifactId>
@@ -22,11 +22,6 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <HikariCP.version>3.1.0</HikariCP.version>
-        <docker.image.prefix>EtlSupervisor1.0</docker.image.prefix>
-        <!--<thymeleaf.version>3.0.2.RELEASE</thymeleaf.version>-->
-        <!--以下两项需要如果不配置，解析themleaf 会有问题-->
-        <!--
-         <thymeleaf-layout-dialect.version>2.1.1</thymeleaf-layout-dialect.version>-->
     </properties>
 
     <dependencies>
@@ -106,31 +101,104 @@
 
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <profiles.active>prod</profiles.active>
+            </properties>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/java</directory>
+                        <filtering>false</filtering>
+                        <excludes>
+                            <exclude>**/*.java</exclude>
+                        </excludes>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <profiles.active>dev</profiles.active>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/java</directory>
+                        <filtering>false</filtering>
+                    </resource>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                        <filtering>false</filtering>
+                    </resource>
+                    <resource>
+                        <directory>src/main/test</directory>
+                        <filtering>false</filtering>
+                    </resource>
+                    <resource>
+                        <directory>src/test/resources</directory>
+                        <filtering>false</filtering>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+    </profiles>
+
     <build>
+        <finalName>EtlSupervisor1.0</finalName>
         <plugins>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <!-- Docker maven plugin -->
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>1.0.0</version>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
                 <configuration>
-                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
-                    <dockerDirectory>src/main/docker</dockerDirectory>
-                    <resources>
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.jar</include>
-                        </resource>
-                    </resources>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-            <!-- Docker maven plugin -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptors>
+                        <descriptor>package.xml</descriptor>
+                    </descriptors>
+                    <outputDirectory>${project.build.directory}/dist/</outputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.dr.leo.etlsupervisor.EtlSupervisorApplication</mainClass>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <addClasspath>true</addClasspath>
+                        </manifest>
+                        <manifestEntries>
+                            <Class-Path>resources/</Class-Path>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
-
+    <!--mvn clean package -Pprod -Dmaven.test.skip=true-->
 </project>
