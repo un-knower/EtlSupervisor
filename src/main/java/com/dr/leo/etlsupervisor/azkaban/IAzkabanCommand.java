@@ -10,7 +10,8 @@ public interface IAzkabanCommand {
      * 输出到模板
      *
      * @param azkabanCommand 命令对象
+     * @return 返回模板保存的路径
      */
-    void outTemplate(IAzkabanCommand azkabanCommand);
+    String outTemplate(IAzkabanCommand azkabanCommand);
 
 }

@@ -121,12 +121,14 @@
                         if (!response.success) {
                             this_.msg = response.payload
                         } else {
+                            const templateUrl = response.payload;
+                            window.open(templateUrl);
                             this_.msg = '保存成功';
                             this_.sparkCommandForm = {
                                 commandType: 'spark.command',
                                 projectName: '',
                                 jobName: '',
-                                dependenciesJobName:'',
+                                dependenciesJobName: '',
                                 driverMemory: 8,
                                 executorMemory: 8,
                                 executorNums: 10,

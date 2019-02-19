@@ -2,6 +2,7 @@ package com.dr.leo.etlsupervisor.controller;
 
 import com.dr.leo.etlsupervisor.azkaban.AzkabanSparkCommand;
 import com.dr.leo.etlsupervisor.common.RestResponseResult;
+import com.dr.leo.etlsupervisor.config.ServerConfig;
 import com.dr.leo.etlsupervisor.params.AzkabanSparkCommandParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -20,10 +21,12 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 @RequestMapping("/api/v1/templates")
 public class TemplatesApiController {
     private final AzkabanSparkCommand sparkCommand;
+    private final ServerConfig serverConfig;
 
     @Autowired
-    public TemplatesApiController(AzkabanSparkCommand sparkCommand) {
+    public TemplatesApiController(AzkabanSparkCommand sparkCommand, ServerConfig serverConfig) {
         this.sparkCommand = sparkCommand;
+        this.serverConfig = serverConfig;
     }
 
     @PostMapping("/sparkCommand/add")
@@ -34,9 +37,10 @@ public class TemplatesApiController {
             String putFileName = putCommandFile.getOriginalFilename();
             System.out.println(putFileName);
         }
+        String host = serverConfig.getUrl();
         AzkabanSparkCommand azkabanSparkCommand = sparkCommandParams.convertTo();
-        sparkCommand.outTemplate(azkabanSparkCommand);
-
-        return RestResponseResult.ok();
+        String templateUrl = sparkCommand.outTemplate(azkabanSparkCommand);
+        String url = host + "/" + templateUrl.split("/static/")[1] + ".job";
+        return RestResponseResult.ok(url);
     }
 }

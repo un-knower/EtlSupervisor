@@ -31,7 +31,7 @@ public class AzkabanSparkCommand extends AbstractAzkabanCommand {
 
 
     @Override
-    public void outTemplate(IAzkabanCommand azkabanCommand) {
+    public String outTemplate(IAzkabanCommand azkabanCommand) {
         AzkabanSparkCommand azkabanSparkCommand = (AzkabanSparkCommand) azkabanCommand;
         File saveJobFile = getAzkabanJobSaveFile(azkabanSparkCommand.getProjectName(), azkabanSparkCommand.getJobName());
         if (StrUtil.isBlank(azkabanSparkCommand.getDependenciesJobName())) {
@@ -39,5 +39,6 @@ public class AzkabanSparkCommand extends AbstractAzkabanCommand {
         } else {
             outTemplate(saveJobFile, azkabanCommand, SPARK_TEMPLATE_HAS_DEPENDENCIES_PATH);
         }
+        return SPARK_TEMPLATE_SAVE_PATH + azkabanSparkCommand.getProjectName() + "/" + azkabanSparkCommand.getJobName();
     }
 }

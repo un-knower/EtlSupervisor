@@ -19,7 +19,7 @@ import java.nio.file.Paths;
  */
 @Data
 public abstract class AbstractAzkabanCommand implements IAzkabanCommand {
-    private static final String SPARK_TEMPLATE_SAVE_PATH = "/static/upload/azkabanJob/";
+    protected static final String SPARK_TEMPLATE_SAVE_PATH = "/static/upload/azkabanJob/";
     private String commandType;
     private String projectName;
     private String jobName;

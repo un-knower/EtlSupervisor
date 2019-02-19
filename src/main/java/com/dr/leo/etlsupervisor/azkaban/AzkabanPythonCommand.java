@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AzkabanPythonCommand extends AbstractAzkabanCommand {
     @Override
-    public void outTemplate(IAzkabanCommand azkabanCommand) {
-
+    public String outTemplate(IAzkabanCommand azkabanCommand) {
+        return "";
     }
 }
