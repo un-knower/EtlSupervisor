@@ -28,7 +28,7 @@ public class PosAnalysisApiController {
     private final static String USEFUL_POS_TAG = "1";
     private final static String NOT_USEFUL_POS_TAG = "0";
     private final static String FINAL_POS_TAG = "2";
-    private final static int POS_ANALYSIS_LIMIT = 30;
+    private final static int POS_ANALYSIS_LIMIT = 60;
 
     @Autowired
     public PosAnalysisApiController(EtlOriPosAnalysisServiceImpl posAnalysisService) {
@@ -49,7 +49,7 @@ public class PosAnalysisApiController {
         List<Integer> finalPosCountList = new ArrayList<>();
         Collections.sort(dateList);
         if (dateList.size() > POS_ANALYSIS_LIMIT) {
-            dateList = dateList.subList(dateList.size() - POS_ANALYSIS_LIMIT, dateList.size() - 1);
+            dateList = dateList.subList(dateList.size() - POS_ANALYSIS_LIMIT, dateList.size());
         }
         dateList.forEach(date -> {
             List<EtlOriPosAnalysis> etlOriPosAnalyses = allPosAnalysisOfRetailerMap.get(date);

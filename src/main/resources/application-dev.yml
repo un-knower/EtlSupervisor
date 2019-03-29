@@ -51,7 +51,7 @@ spring:
     host: smtp.mxhichina.com
     port: 465
     username: leo.jie@datarealglobal.com
-    password: Yyf5211314
+    password: Yyf5211314!
     protocol: smtp
     default-encoding: UTF-8
     properties:
