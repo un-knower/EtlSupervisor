@@ -1,0 +1,226 @@
+<div th:with="pageTitle = '流水监控'" th:include="comm/public/header" xmlns:th="http://www.w3.org/1999/xhtml"></div>
+<body xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:include="comm/public/nav"></div>
+
+<div id="app" class="container">
+    <div th:include="comm/public/alert" xmlns:th="http://www.w3.org/1999/xhtml"></div>
+    <form class="bs-example bs-example-form" role="form">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="input-group">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-primary dropdown-toggle"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{retailerSelected}} <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li v-for="(retailer,index) in retailerList"><a @click="selectRetailer(retailer)">
+                                {{retailer.retailerName}}</a>
+                            </li>
+                        </ul>
+                    </div><!-- /btn-group -->
+                    <input id="pickDate" type="text" class="form-control" placeholder="选择日期"
+                           style="width :200px;margin-left: 40px; " v-model="pickDateVal" readonly>
+                    <span class="input-group-btn" style="margin-left: -80px">
+						<button class="btn btn-info" type="button" @click="showCheckData()">
+							确 定
+						</button>
+					</span>
+                </div><!-- /input-group -->
+            </div>
+        </div><!-- /.row -->
+    </form>
+
+    <div class="panel panel-primary" style="margin-top: 20px;">
+        <div class="panel-heading">日常清洗流水数据统计</div>
+        <div class="panel-body">
+            <div id="main" style="width: 100%;height:600px;"></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function initDate() {
+        let date = new Date();
+        date.setDate(date.getDate() - 1);
+        const year = date.getFullYear();
+        let month = date.getMonth() + 1;
+        let day = date.getDate();
+
+        if (month < 10) {
+            month = "0" + month
+        }
+        if (day < 10) {
+            day = "0" + day
+        }
+        return year + "-" + month + "-" + day
+    }
+
+    $(function () {
+        $("[data-toggle='popover']").popover();
+        $('#pickDate').datetimepicker({
+            format: 'yyyy-mm-dd',  //格式  如果只有yyyy-mm-dd那就是0000-00-00
+            autoclose: true,//选择后是否自动关闭
+            minView: 2,//最精准的时间选择为日期  0-分 1-时 2-日 3-月
+            language: 'zh-CN', //中文
+            weekStart: 1, //一周从星期几开始
+            todayBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            forceParse: 0,
+            // daysOfWeekDisabled:"1,2,3", //一周的周几不能选 格式为"1,2,3"  数组格式也行
+            todayBtn: true,  //在底部是否显示今天
+            todayHighlight: false, //今天是否高亮显示
+            keyboardNavigation: true, //方向图标改变日期  必须要有img文件夹 里面存放图标
+            showMeridian: false,  //是否出现 上下午
+            initialDate: new Date(),
+            startDate: "2017-01-01" //日期开始时间 也可以是new Date()只能选择以后的时间
+        })
+            .on("changeDate", function () {
+                this.pickDateVal = $('#pickDate').val();
+            });
+    });
+    new Vue({
+        el: '#app',
+        data: {
+            pickDateVal: initDate(),
+            retailerList: [{}],
+            fileList: [],
+            realRowNumberList: [],
+            checkRowNumberList: [],
+            differenceNumList: [],
+            retailerSelected: '美宜佳',
+            retailerCodeSelected: 'R10001',
+            msg: "日常零售商数据采集统计!"
+        },
+        created() {
+            this.initRetailer();
+            this.getPosAnalysisData();
+        },
+        mounted() {
+            this.drawLine()
+        },
+        methods: {
+            getPosAnalysisData() {
+                const url = "/api/v1/file/record/one?retailerCode=" + this.retailerCodeSelected
+                    + "&day=" + this.pickDateVal;
+                const _this = this;
+                axios.get(url).then(function (res) {
+                    const code = res.data.code;
+                    console.log(code);
+                    if (code === 5000) {
+                        _this.msg = "暂无数据！";
+                    } else {
+                        _this.msg = "日常零售商数据采集统计！";
+                        const resData = res.data.payload;
+                        console.log(resData);
+                        _this.fileList = resData.files;
+                        _this.realRowNumberList = resData.realRowNumList;
+                        _this.checkRowNumberList = resData.checkRowNumList;
+                        _this.differenceNumList = resData.differenceNumList;
+                        _this.drawLine()
+                    }
+                }).catch(function (reason) {
+                    console.log(reason)
+                });
+            },
+            selectRetailer(retailer) {
+                this.retailerSelected = retailer.retailerName;
+                this.retailerCodeSelected = retailer.retailerCode
+            },
+            showCheckData() {
+                this.pickDateVal = $('#pickDate').val();
+                this.getPosAnalysisData();
+            },
+            initRetailer() {
+                const url = "/api/retailer/list/config";
+                const _this = this;
+                axios.get(url).then(function (res) {
+                    console.log(res);
+                    _this.retailerList = res.data.payload;
+                }).catch(function (reason) {
+                    console.log(reason)
+                });
+            },
+            drawLine() {
+                // 基于准备好的dom，初始化echarts实例
+                let myChart = echarts.init(document.getElementById('main'));
+                myChart.setOption({
+                    title: {
+                        text: '日常零售商数据采集统计'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                            type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                        }
+                    },
+                    legend: {
+                        data: ['真实行数', '校验行数', '差值']
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            axisTick: {show: false},
+                            data: this.fileList,
+                            axisLabel: {
+                                interval: 0,
+                                rotate: 20,
+                                margin: 2
+                            }
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value'
+                        }
+                    ],
+                    series: [
+                        {
+                            name: '真实行数',
+                            type: 'bar',
+                            label: {
+                                normal: {
+                                    show: false,
+                                    position: 'inside'
+                                }
+                            },
+                            data: this.realRowNumberList
+                        },
+                        {
+                            name: '校验行数',
+                            type: 'bar',
+                            stack: '总量',
+                            label: {
+                                normal: {
+                                    show: false
+                                }
+                            },
+                            data: this.checkRowNumberList
+                        },
+                        {
+                            name: '差值',
+                            type: 'bar',
+                            stack: '总量',
+                            label: {
+                                normal: {
+                                    show: false,
+                                    position: 'left'
+                                }
+                            },
+                            data: this.differenceNumList
+                        }
+                    ]
+                })
+            }
+        }
+    });
+</script>
+</body>
+</html>

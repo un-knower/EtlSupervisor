@@ -25,6 +25,11 @@ public class IndexPageController {
         return "pos_analysis";
     }
 
+    @GetMapping("/pos_record_analysis")
+    public String posRecordAnalysis() {
+        return "pos_record_analysis";
+    }
+
     @GetMapping("/pos_watcher")
     public String posWatcher() {
         return "pos_watcher";
