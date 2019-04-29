@@ -1,7 +1,6 @@
 package com.dr.leo.etlsupervisor.service.impl;
 
-import com.dr.leo.etlsupervisor.azkaban.model.AzkabanFlowGraph;
-import com.dr.leo.etlsupervisor.azkaban.model.AzkabanProject;
+import com.dr.leo.etlsupervisor.azkaban.model.*;
 import com.dr.leo.etlsupervisor.config.AzkabanConfig;
 import com.dr.leo.etlsupervisor.entity.EtlAzkabanSession;
 import com.dr.leo.etlsupervisor.exception.ServiceException;
@@ -174,7 +173,15 @@ public class AzkabanRestApiServiceImpl {
     }
 
 
-    public String executeFlow(String sessionId, String project, String flow) {
+    /**
+     * 执行一个任务流
+     *
+     * @param sessionId
+     * @param project
+     * @param flow
+     * @return
+     */
+    public AzkabanExecutorResponse executeFlow(String sessionId, String project, String flow) {
         disableSslVerification();
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders hs = getHttpHeaders();
@@ -187,19 +194,72 @@ public class AzkabanRestApiServiceImpl {
                 .exchange(azkabanConfig.getUrl() + "/executor?session.id={id}&ajax=executeFlow&" +
                                 "project={project}&flow={flow}", HttpMethod.GET,
                         new HttpEntity<String>(hs), String.class, params);
-
-        if (AZKABAN_SC_OK != exchange.getStatusCodeValue()) {
-            LOG.error("执行一个流请求失败:{}:{}", project, flow);
-            return null;
-        }
-        JsonElement obj = new Gson().fromJson(exchange.getBody(), JsonObject.class).get("execid");
-        if (obj == null) {
-            LOG.error("执行一个流失败:{}:{}", project, flow);
-            return null;
-        }
-        return obj.getAsString();
+        String res = exchange.getBody();
+        Gson gson = new Gson();
+        return gson.fromJson(res, AzkabanExecutorResponse.class);
     }
 
+    /**
+     * 获取一个流的执行情况
+     *
+     * @param sessionId
+     * @param executorId
+     * @return
+     */
+    public AzkabanExecutorFinishResponse fetchOneFlowOfExecutor(String sessionId, Integer executorId) {
+        disableSslVerification();
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders hs = getHttpHeaders();
+        hs.add("Accept", "text/plain;charset=utf-8");
+        Map<String, String> params = new HashMap<>(2);
+        params.put("id", sessionId);
+        params.put("execid", String.valueOf(executorId));
+        final String url = azkabanConfig.getUrl() + "/executor?session.id={id}&ajax=fetchexecflow&"
+                + "execid={execid}";
+        ResponseEntity<String> exchange = restTemplate
+                .exchange(url, HttpMethod.GET, new HttpEntity<String>(hs), String.class, params);
+        String res = exchange.getBody();
+        Gson gson = new Gson();
+        return gson.fromJson(res, AzkabanExecutorFinishResponse.class);
+    }
+
+    /**
+     * 查看一个流下的执行情况
+     *
+     * @param sessionId
+     * @param project
+     * @param flow
+     * @param start
+     * @param length
+     * @return
+     */
+    public AzkabanExecutionsOfOneFlow fetchExecutionsOfOneFlow(String sessionId, String project, String flow, Integer start, Integer length) {
+        disableSslVerification();
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders hs = getHttpHeaders();
+        hs.add("Accept", "text/plain;charset=utf-8");
+        Map<String, String> params = new HashMap<>(5);
+        params.put("id", sessionId);
+        params.put("project", project);
+        params.put("flow", flow);
+        params.put("start", start.toString());
+        params.put("length", length.toString());
+        final String url = azkabanConfig.getUrl() + "/manager?session.id={id}&ajax=fetchFlowExecutions&"
+                + "project={project}&flow={flow}&start={start}&length={length}";
+        ResponseEntity<String> exchange = restTemplate
+                .exchange(url, HttpMethod.GET, new HttpEntity<String>(hs), String.class, params);
+        String res = exchange.getBody();
+        Gson gson = new Gson();
+        return gson.fromJson(res, AzkabanExecutionsOfOneFlow.class);
+    }
+
+    /**
+     * 查看一个项目下的任务流
+     *
+     * @param sessionId
+     * @param project
+     * @return
+     */
     public AzkabanProject fetchFlowsOfOneProject(String sessionId, String project) {
         disableSslVerification();
         RestTemplate restTemplate = new RestTemplate();
@@ -217,6 +277,14 @@ public class AzkabanRestApiServiceImpl {
         return gson.fromJson(res, AzkabanProject.class);
     }
 
+    /**
+     * 查看一个流下的job
+     *
+     * @param sessionId
+     * @param project
+     * @param flow
+     * @return
+     */
     public AzkabanFlowGraph fetchJobsOfOneFlow(String sessionId, String project, String flow) {
         disableSslVerification();
         RestTemplate restTemplate = new RestTemplate();
@@ -234,5 +302,6 @@ public class AzkabanRestApiServiceImpl {
         Gson gson = new Gson();
         return gson.fromJson(res, AzkabanFlowGraph.class);
     }
+
 
 }
