@@ -25,31 +25,31 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public RestResponseResult<String> exceptionHandler(Exception e) {
+    public RestResponseResult exceptionHandler(Exception e) {
         logger.error(e.getMessage());
         e.printStackTrace();
-        return RestResponseResult.failed("你把系统玩炸了，开发人员正在火速救场！");
+        return RestResponseResult.failed().message("你把系统玩炸了，开发人员正在火速救场！");
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
-    public RestResponseResult<String> validException(MethodArgumentNotValidException e) {
+    public RestResponseResult validException(MethodArgumentNotValidException e) {
         FieldError fieldError = e.getBindingResult().getFieldError();
         String errorMsg = "参数校验异常！";
         if (null != fieldError) {
             errorMsg = fieldError.getDefaultMessage();
             logger.error("参数校验异常:{}({})", errorMsg, fieldError.getField());
         }
-        return RestResponseResult.failed(errorMsg);
+        return RestResponseResult.failed().message(errorMsg);
     }
 
     @ExceptionHandler({BindException.class})
-    public RestResponseResult<String> bindException(BindException e) {
+    public RestResponseResult bindException(BindException e) {
         FieldError fieldError = e.getBindingResult().getFieldError();
         String errorMsg = "必填校验异常！";
         if (null != fieldError) {
             errorMsg = fieldError.getDefaultMessage();
             logger.error("必填校验异常:{}({})", errorMsg, fieldError.getField());
         }
-        return RestResponseResult.failed(errorMsg);
+        return RestResponseResult.failed().message(errorMsg);
     }
 }

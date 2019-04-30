@@ -27,7 +27,7 @@ public class EtlSystemLog implements Serializable {
     private String retailerCode;
     private String msg;
     private String logLevel;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private LocalDateTime logTime;
     private String logType;
     private String worker;

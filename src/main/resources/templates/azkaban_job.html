@@ -1,0 +1,218 @@
+<div th:with="pageTitle = 'azkaban job'" th:include="comm/public/header" xmlns:th="http://www.w3.org/1999/xhtml"></div>
+<body xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:include="comm/public/nav"></div>
+<div id="app">
+    <div class="container">
+        <div class="clearfix">
+            <button type="button" data-toggle="modal" data-target="#createAzkabanJobModal" data-whatever="@mdo"
+                    class="btn btn-info pull-right" style="margin-bottom: 20px; " @click="showCreateJobModal()">
+                创建Azkaban任务
+            </button>
+        </div>
+        <table class="table table-hover table-bordered">
+            <tr>
+                <th>项目名称</th>
+                <th>工作流名称</th>
+                <th>用户</th>
+                <th>邮箱</th>
+                <th>项目描述</th>
+                <th>最新更新时间</th>
+                <th>操作</th>
+            </tr>
+            <tr v-for="(job,index) in azkabanJobs">
+                <td>{{job.project}}</td>
+                <td>{{job.flow}}</td>
+                <td>{{job.user}}</td>
+                <td>{{job.email | formatDescription}}</td>
+                <td>{{job.description | formatDescription}}</td>
+                <td>{{job.lastUpdateTime}}</td>
+                <td>
+                    <div class="btn-group btn-group-sm pull-right">
+                        <button type="button" data-toggle="modal" data-target="#showAzkabanJobModal"
+                                data-whatever="@mdo"
+                                class="btn btn-warning" @click="showDetailJobModal(job)">查看详情
+                        </button>
+                        <button type="button" data-toggle="modal" data-target="#deleteAzkabanJobModal"
+                                data-whatever="@mdo" class="btn btn-danger" @click="showDeleteJobModal(job)">删 除
+                        </button>
+                        <button type="button" class="btn btn-success" data-toggle="modal"
+                                data-target="#runAzkabanJobModal"
+                                data-whatever="@mdo" @click="showRunJobModal(job)">运 行
+                        </button>
+                        <button type="button" data-toggle="modal" data-target="#updateAzkabanJobModal"
+                                data-whatever="@mdo"
+                                class="btn btn-info pull-right" @click="showUpdateJobModal(job)">编 辑
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div th:include="comm/template/showAzkabanJobModel"></div>
+    <div th:include="comm/template/createAzkabanJobModel"></div>
+    <div th:include="comm/template/updateAzkabanJobModel"></div>
+    <div th:include="comm/template/runAzkabanJobModel"></div>
+    <div th:include="comm/template/deleteAzkabanJobModel"></div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("[data-toggle='popover']").popover();
+    });
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            azkabanJobs: [
+                {
+                    id: 1,
+                    project: 'leo_work',
+                    flow: 'flush_dim_table',
+                    user: 'leo',
+                    email: "leo.jie@datarealglobal.com",
+                    description: '测试任务',
+                    create: '2018-09-28 10:22:22',
+                    lastUpdateTime: '2018-09-28 10:22:22'
+                }
+            ],
+            editType: "234242",
+            jobForm: {
+                project: "",
+                flow: "",
+                user: "",
+                email: "",
+                description: ""
+            },
+            deleteJobId: 0,
+            msg: "添加Azkaban任务",
+            waitRunJob: {}
+        },
+        created() {
+            this.getAllAzkabanJobs()
+        },
+        filters: {
+            formatDescription(desc) {
+                if (desc.length > 10) {
+                    return desc.substring(0, 10) + "......"
+                } else {
+                    return desc
+                }
+            }
+        },
+        methods: {
+            showDetailJobModal(job) {
+                this.jobForm = job;
+                this.editType = "查看Azkaban项目详情";
+            },
+            showCreateJobModal() {
+                this.editType = "创建Azkaban项目";
+            },
+            showDeleteJobModal(job) {
+                this.deleteJobId = job.id;
+                this.editType = "确认删除项目：" + job.project + " ?";
+            },
+            showUpdateJobModal(job) {
+                this.jobForm = job;
+                this.editType = "更新Azkaban项目";
+            },
+            showRunJobModal(job) {
+                this.waitRunJob = job;
+                this.editType = "确认执行项目：" + job.project + " ——> " + job.flow + " ?";
+            },
+            showJobExecuteHistory(project, flow) {
+                window.location.href = "/azkaban_job_execute_history?project=" + project + "&flow=" + flow + "&pageNo=1&pageSize=16";
+            },
+            getAllAzkabanJobs() {
+                const _this = this;
+                const url = "/api/v1/azkaban/job/all";
+                axios({
+                    url: url,
+                    method: 'get'
+                }).then(function (res) {
+                    const resData = res.data;
+                    console.log(resData);
+                    if (resData.success) {
+                        _this.azkabanJobs = resData.payload.azkabanJobs
+                    } else {
+                        _this.msg = data.msg
+                    }
+                })
+            },
+            saveAzkabanJob() {
+                console.log(this.jobForm);
+                const _this = this;
+                const url = "/api/v1/azkaban/job/add";
+                axios(
+                    {
+                        url: url,
+                        method: 'post',
+                        data: this.jobForm
+                    }
+                ).then(function (res) {
+                    const data = res.data;
+                    console.log(data);
+                    if (data.success) {
+                        window.location.reload()
+                    } else {
+                        _this.msg = data.msg
+                    }
+                })
+            },
+            updateAzkabanJob() {
+                console.log(this.jobForm);
+                const _this = this;
+                const url = "/api/v1/azkaban/job/update";
+                axios(
+                    {
+                        url: url,
+                        method: 'post',
+                        data: {
+                            id: this.jobForm.id,
+                            project: this.jobForm.project,
+                            flow: this.jobForm.flow,
+                            user: this.jobForm.user,
+                            email: this.jobForm.email,
+                            description: this.jobForm.description
+                        }
+                    }
+                ).then(function (res) {
+                    const data = res.data;
+                    console.log(data);
+                    if (data.success) {
+                        window.location.reload()
+                    } else {
+                        _this.msg = data.msg
+                    }
+                })
+            },
+            deleteAzkabanJob() {
+                const url = "/api/v1/azkaban/job/delete/" + this.deleteJobId;
+                axios({
+                    url: url,
+                    method: 'get'
+                }).then(function (res) {
+                    const resData = res.data;
+                    if (resData.success) {
+                        window.location.reload()
+                    }
+                });
+            },
+            runAzkabanJob() {
+                const job = this.waitRunJob;
+                const url = "/api/v1/azkaban/execute/flow?project=" + job.project + "&flow=" + job.flow;
+                axios({
+                    url: url,
+                    method: 'get'
+                }).then(function (res) {
+                    const resData = res.data;
+                    if (resData.success) {
+                        window.location.reload()
+                    } else {
+                        alert(resData.msg)
+                    }
+                })
+            }
+        }
+    })
+</script>
+</body>
+</html>

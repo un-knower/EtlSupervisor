@@ -1,0 +1,45 @@
+<div class="modal fade" id="updateAzkabanJobModal" tabindex="-1" role="dialog" aria-labelledby="updateAzkabanJobModal"
+     data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">{{ editType }}</h4>
+            </div>
+            <div th:include="comm/public/alert" xmlns:th="http://www.w3.org/1999/xhtml"></div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="projectName" class="control-label">项目名称:</label>
+                        <input type="text" class="form-control" id="projectName" v-model="jobForm.project"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="flowName" class="control-label">工作流名称:</label>
+                        <input type="text" class="form-control" id="flowName" v-model="jobForm.flow"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="username" class="control-label">所属用户:</label>
+                        <input type="text" class="form-control" id="username" v-model="jobForm.user"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="emailAddress" class="control-label">通知邮箱:</label>
+                        <textarea class="form-control" id="emailAddress" v-model="jobForm.email"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description" class="control-label">项目描述:</label>
+                        <textarea class="form-control" id="description" v-model="jobForm.description"></textarea>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" @click="updateAzkabanJob()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>

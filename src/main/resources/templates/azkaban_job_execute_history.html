@@ -1,0 +1,99 @@
+<div th:with="pageTitle = 'Azkaban任务执行记录'" th:include="comm/public/header"
+     xmlns:th="http://www.w3.org/1999/xhtml"></div>
+<body xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:include="comm/public/nav"></div>
+<div id="app">
+    <div class="container">
+        <div class="clearfix">
+            <button type="button" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo"
+                    class="btn btn-info pull-right" style="margin-bottom: 20px; ">搜索
+            </button>
+        </div>
+        <table class="table table-hover table-bordered">
+            <tr>
+                <th>任务执行Id</th>
+                <th>项目名称</th>
+                <th>工作流名称</th>
+                <th>开始时间</th>
+                <th>结束时间</th>
+                <th>运行时长</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            <tr th:each="item : ${executionsHistory.executions}">
+                <td th:text="${{item.execId}}"></td>
+                <td th:text="${{executionsHistory.project}}"></td>
+                <td th:text="${{executionsHistory.flow}}"></td>
+                <td th:text="${{#dates.format(item.startTime,'yyyy-MM-dd hh:mm:ss')}}"></td>
+                <td th:text="${{#dates.format(item.endTime,'yyyy-MM-dd hh:mm:ss')}}"></td>
+                <!--<td th:text="${{item.endTime - item.startTime}}"></td>-->
+                <td>
+                    <span leo:diffTime="${item.endTime - item.startTime}"></span>
+                </td>
+                <td th:text="${{item.status}}"></td>
+                <td th:text="结束任务"></td>
+            </tr>
+        </table>
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li>
+                    <a href="#">
+                        <span th:text="${{totalPage}}"></span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" aria-label="Previous">
+                        <span aria-hidden="true">上一页</span>
+                    </a>
+                </li>
+                <li th:each="item : ${pageSliders}"><a href="javascript:void(0)" th:text="${{item}}"
+                                                       th:onclick="'javascript:changePage('+${item}+')'"></a></li>
+                <li>
+                    <a href="#" aria-label="Next">
+                        <span aria-hidden="true">下一页</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("[data-toggle='popover']").popover();
+
+
+    });
+
+    /**
+     * @return {string}
+     */
+    function getUrlRelativePath() {
+        const url = document.location.toString();
+        const arrUrl = url.split("//");
+
+        const start = arrUrl[1].indexOf("/");
+        let relUrl = arrUrl[1].substring(start);//stop省略，截取从start开始到结尾的所有字符
+
+        if (relUrl.indexOf("?") !== -1) {
+            relUrl = relUrl.split("?")[0];
+        }
+        return relUrl;
+    }
+
+    function getUrlPara() {
+        const url = document.location.toString();
+        const arrUrl = url.split("?");
+        return arrUrl[1];
+    }
+
+    function changePage(item) {
+        let url = getUrlRelativePath();
+        const params = getUrlPara().split("&");
+        const pageNoParam = params[2].split("=")[0] + "=" + item;
+        url = url + "?" + params[0] + "&" + params[1] + "&" + pageNoParam + "&" + params[3];
+        console.log(params);
+        window.location.href = url;
+    }
+</script>
+</body>
+</html>
