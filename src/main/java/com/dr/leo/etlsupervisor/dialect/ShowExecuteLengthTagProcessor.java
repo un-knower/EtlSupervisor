@@ -43,7 +43,6 @@ public class ShowExecuteLengthTagProcessor extends AbstractAttributeTagProcessor
                              AttributeName attributeName, String s, IElementTagStructureHandler iElementTagStructureHandler) {
         //s为自定义属性startTime的内容，如果s为表达式，该函数可以获取表达式的值
         final Object diffTimeValue = getExpressionValue(iTemplateContext, s);
-        log.info("运行时长：{}", diffTimeValue);
         if (null == diffTimeValue || Long.valueOf(diffTimeValue.toString()) < 0) {
             iElementTagStructureHandler.setBody("-", false);
         } else {

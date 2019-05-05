@@ -6,7 +6,8 @@
     <div class="container">
         <div class="alert alert-info">
             <a href="#"></a>
-            <strong style="color: #d9534f">系统消息：</strong><span style="color: #d9534f" id="alertMsg">系统的一些提示信息将在此处显示！</span>
+            <strong style="color: #d9534f">系统消息：</strong><span style="color: #d9534f"
+                                                               id="alertMsg">系统的一些提示信息将在此处显示！</span>
         </div>
         <input id="waitToCancelJobExecId" type="hidden" value="0"/>
         <!-- <div class="clearfix">
@@ -49,19 +50,23 @@
         <nav aria-label="Page navigation">
             <ul class="pagination">
                 <li>
-                    <a href="#">
+                    <a>
                         <span th:text="${{totalPage}}"></span>
                     </a>
                 </li>
-                <li>
-                    <a href="#" aria-label="Previous">
+                <li th:if="${not isFirstPage}">
+                    <a href="javascript:void(0)" th:onclick="goPage([[${previousPage}]]);" aria-label="Previous">
                         <span aria-hidden="true">上一页</span>
                     </a>
                 </li>
-                <li th:each="item : ${pageSliders}"><a href="javascript:void(0)" th:text="${{item}}"
-                                                       th:onclick="'javascript:changePage('+${item}+')'"></a></li>
-                <li>
-                    <a href="#" aria-label="Next">
+                <li th:each="item : ${pageSliders}">
+                    <a th:if="${currentPage eq item}" href="javascript:void(0)" th:text="${{item}}"
+                       style="background: #204d74;color: white;" th:onclick="'javascript:changePage('+${item}+')'"></a>
+                    <a th:if="${currentPage ne item}" href="javascript:void(0)" th:text="${{item}}"
+                       th:onclick="'javascript:changePage('+${item}+')'"></a>
+                </li>
+                <li th:if="${not isLastPage}">
+                    <a href="javascript:void(0)" th:onclick="goPage([[${nextPage}]]);" aria-label="Next">
                         <span aria-hidden="true">下一页</span>
                     </a>
                 </li>
@@ -123,6 +128,14 @@
         const pageNoParam = params[2].split("=")[0] + "=" + item;
         url = url + "?" + params[0] + "&" + params[1] + "&" + pageNoParam + "&" + params[3];
         console.log(params);
+        window.location.href = url;
+    }
+
+    function goPage(pageNo) {
+        let url = getUrlRelativePath();
+        const params = getUrlPara().split("&");
+        const pageNoParam = params[2].split("=")[0] + "=" + pageNo;
+        url = url + "?" + params[0] + "&" + params[1] + "&" + pageNoParam + "&" + params[3];
         window.location.href = url;
     }
 

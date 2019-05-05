@@ -90,10 +90,16 @@ public class IndexPageController {
             }
             view = new ModelAndView("azkaban_job_execute_history");
             Pageable pageable = new Pageable(pageSize, azkabanExecutionsOfOneFlow.getTotal());
+            pageable.setPage(pageNo <= 0 ? 1 : pageNo);
             view.addObject("executionsHistory", azkabanExecutionsOfOneFlow);
             int[] sliders = pageable.getSlider(pageNo == 0 ? pageNo + 1 : pageNo);
             view.addObject("pageSliders", sliders);
             view.addObject("totalPage", "总页数: " + pageable.getPages());
+            view.addObject("isFirstPage", pageable.isFirstPage());
+            view.addObject("isLastPage", pageable.isLastPage());
+            view.addObject("previousPage", pageable.getPreviousPage());
+            view.addObject("nextPage", pageable.getNextPage());
+            view.addObject("currentPage", pageNo <= 0 ? 1 : pageNo);
             return view;
 
         } catch (ServiceException e) {

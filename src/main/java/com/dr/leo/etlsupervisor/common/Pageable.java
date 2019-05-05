@@ -40,6 +40,8 @@ public class Pageable implements Serializable {
     private int startRow;
     // 结束条数
     private int endRow;
+    private boolean firstPage = false;
+    private boolean lastPage = false;
 
     /**
      * 创建一个分页器，初始项数为无限大<code>UNKNOWN_ITEMS</code>，默认每页显示<code>10</code>项
@@ -299,12 +301,33 @@ public class Pageable implements Serializable {
         if (totalPage <= DEFAULT_SLIDER_SIZE) {
             return ArrayUtil.range(1, totalPage + 1);
         }
-        if (currentPageNo + DEFAULT_SLIDER_SIZE >= totalPage) {
-            return ArrayUtil.range(totalPage - DEFAULT_SLIDER_SIZE + 1, totalPage + 1);
-        } else {
-            return ArrayUtil.range(currentPageNo, currentPageNo + DEFAULT_SLIDER_SIZE);
+        //中位数
+        int middle = DEFAULT_SLIDER_SIZE / 2;
+        int start = currentPageNo - middle;
+        int end = currentPageNo + middle + 1;
+        if (start <= 0) {
+            start = 1;
+            end = DEFAULT_SLIDER_SIZE + 1;
         }
+        if (end >= totalPage) {
+            end = totalPage + 1;
+            start = end - DEFAULT_SLIDER_SIZE;
+        }
+        return ArrayUtil.range(start, end);
     }
 
+    public boolean isFirstPage() {
+        if (getPage() == 1) {
+            this.firstPage = true;
+        }
+        return firstPage;
+    }
+
+    public boolean isLastPage() {
+        if (getPage() >= this.getPages()) {
+            lastPage = true;
+        }
+        return lastPage;
+    }
 
 }
