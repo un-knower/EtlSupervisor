@@ -119,4 +119,21 @@ public class AzkabanApiController {
         }
         return RestResponseResult.ok();
     }
+
+    @GetMapping("/cancel/flow/{execId}")
+    public RestResponseResult cancelOnwFlow(@PathVariable Integer execId) {
+        try {
+            String sessionId = azkabanRestApiService.getAzkabanSessionId();
+            AzkabanCancelFlowResponse azkabanCancelFlowResponse =
+                    azkabanRestApiService.cancelOneFlow(sessionId, execId);
+            if (StrUtil.isNotBlank(azkabanCancelFlowResponse.getError())) {
+                return RestResponseResult.failed().message(azkabanCancelFlowResponse.getError());
+            }
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+        return RestResponseResult.ok();
+    }
+
+
 }

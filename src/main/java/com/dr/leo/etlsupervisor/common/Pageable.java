@@ -18,7 +18,7 @@ public class Pageable implements Serializable {
     public static final int DEFAULT_ITEMS_PER_PAGE = 16;
 
     /**
-     * 滑动窗口默认的大小(7)
+     * 滑动窗口默认的大小(5)
      */
     public static final int DEFAULT_SLIDER_SIZE = 5;
 

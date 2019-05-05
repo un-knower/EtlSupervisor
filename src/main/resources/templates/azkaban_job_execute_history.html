@@ -4,11 +4,16 @@
 <div th:include="comm/public/nav"></div>
 <div id="app">
     <div class="container">
-        <div class="clearfix">
-            <button type="button" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo"
-                    class="btn btn-info pull-right" style="margin-bottom: 20px; ">搜索
-            </button>
+        <div class="alert alert-info">
+            <a href="#"></a>
+            <strong style="color: #d9534f">系统消息：</strong><span style="color: #d9534f" id="alertMsg">系统的一些提示信息将在此处显示！</span>
         </div>
+        <input id="waitToCancelJobExecId" type="hidden" value="0"/>
+        <!-- <div class="clearfix">
+             <button type="button" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo"
+                     class="btn btn-info pull-right" style="margin-bottom: 20px; ">搜索
+             </button>
+         </div>-->
         <table class="table table-hover table-bordered">
             <tr>
                 <th>任务执行Id</th>
@@ -26,12 +31,19 @@
                 <td th:text="${{executionsHistory.flow}}"></td>
                 <td th:text="${{#dates.format(item.startTime,'yyyy-MM-dd hh:mm:ss')}}"></td>
                 <td th:text="${{#dates.format(item.endTime,'yyyy-MM-dd hh:mm:ss')}}"></td>
-                <!--<td th:text="${{item.endTime - item.startTime}}"></td>-->
                 <td>
                     <span leo:diffTime="${item.endTime - item.startTime}"></span>
                 </td>
-                <td th:text="${{item.status}}"></td>
-                <td th:text="结束任务"></td>
+                <td>
+                    <div class="job-history-executor-status" th:text="${{item.status}}"
+                         th:classappend="${{item.status}}"></div>
+                </td>
+                <td>
+                    <a type="button" id="cancelbtn" class="btn btn-danger btn-sm"
+                       href="javascript:void(0)"
+                       th:onclick="killFlow([[${item}]]);" th:text="停止任务">
+                    </a>
+                </td>
             </tr>
         </table>
         <nav aria-label="Page navigation">
@@ -56,12 +68,31 @@
             </ul>
         </nav>
     </div>
+    <div class="modal fade" id="cancelAzkabanJobRunModel" tabindex="-1" role="dialog"
+         aria-labelledby="cancelAzkabanJobRunModel"
+         data-backdrop="static">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">停止正在执行的Azkaban任务</h4>
+                </div>
+                <div class="modal-body">
+                    <span style="font-size:18px;color: red">确认立即停止正在执行的所选任务？</span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" th:onclick="javascript:cancelAzkabanJob()">立即执行
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script type="text/javascript">
     $(function () {
         $("[data-toggle='popover']").popover();
-
-
     });
 
     /**
@@ -93,6 +124,33 @@
         url = url + "?" + params[0] + "&" + params[1] + "&" + pageNoParam + "&" + params[3];
         console.log(params);
         window.location.href = url;
+    }
+
+    function killFlow(item) {
+        console.log(item);
+        if (item.status !== 'RUNNING') {
+            $('#alertMsg').text('只能停止正在运行的任务！');
+        } else {
+            $('#waitToCancelJobExecId').val(item.execId)
+            $('#cancelAzkabanJobRunModel').modal('show')
+        }
+    }
+
+    function cancelAzkabanJob() {
+        const execId = $('#waitToCancelJobExecId').val();
+        const url = '/api/v1/azkaban/cancel/flow/' + execId;
+        axios({
+            url: url,
+            method: 'get'
+        }).then(function (res) {
+            const resData = res.data;
+            console.log(resData);
+            if (resData.success) {
+                window.location.reload()
+            } else {
+                $('#alertMsg').text(data.msg);
+            }
+        })
     }
 </script>
 </body>

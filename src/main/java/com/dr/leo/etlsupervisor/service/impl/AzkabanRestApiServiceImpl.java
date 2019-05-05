@@ -303,5 +303,27 @@ public class AzkabanRestApiServiceImpl {
         return gson.fromJson(res, AzkabanFlowGraph.class);
     }
 
+    /**
+     * 取消一个正在运行的流
+     *
+     * @param sessionId
+     * @param execId
+     */
+    public AzkabanCancelFlowResponse cancelOneFlow(String sessionId, Integer execId) {
+        disableSslVerification();
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders hs = getHttpHeaders();
+        hs.add("Accept", "text/plain;charset=utf-8");
+        Map<String, String> params = new HashMap<>(2);
+        params.put("id", sessionId);
+        params.put("execId", execId.toString());
+        ResponseEntity<String> exchange = restTemplate
+                .exchange(azkabanConfig.getUrl() + "/executor?session.id={id}&ajax=cancelFlow&" +
+                        "execid={execId}", HttpMethod.GET, new HttpEntity<String>(hs), String.class, params);
+        String res = exchange.getBody();
+        Gson gson = new Gson();
+        return gson.fromJson(res, AzkabanCancelFlowResponse.class);
+    }
+
 
 }

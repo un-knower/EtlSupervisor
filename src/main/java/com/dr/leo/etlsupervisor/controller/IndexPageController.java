@@ -94,7 +94,6 @@ public class IndexPageController {
             int[] sliders = pageable.getSlider(pageNo == 0 ? pageNo + 1 : pageNo);
             view.addObject("pageSliders", sliders);
             view.addObject("totalPage", "总页数: " + pageable.getPages());
-
             return view;
 
         } catch (ServiceException e) {
