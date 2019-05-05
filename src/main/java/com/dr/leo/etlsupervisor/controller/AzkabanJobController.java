@@ -30,12 +30,7 @@ public class AzkabanJobController {
 
     @PostMapping("/add")
     public RestResponseResult addAzkabanJob(@Validated @RequestBody EtlAzkabanJobDto azkabanJobDto) {
-        EtlAzkabanJob etlAzkabanJob = azkabanJobService.findOneJob(azkabanJobDto.getProject());
-        if (null != etlAzkabanJob) {
-            return RestResponseResult.failed().message(StrUtil.format("{}已经存在！",
-                    azkabanJobDto.getProject()));
-        }
-        etlAzkabanJob = azkabanJobService.findOneJob(azkabanJobDto.getProject(), azkabanJobDto.getFlow());
+        EtlAzkabanJob etlAzkabanJob = azkabanJobService.findOneJob(azkabanJobDto.getProject(), azkabanJobDto.getFlow());
         if (null != etlAzkabanJob) {
             return RestResponseResult.failed().message(StrUtil.format("{} {} 已经存在！",
                     azkabanJobDto.getProject(), azkabanJobDto.getFlow()));

@@ -20,8 +20,8 @@
                 <th>操作</th>
             </tr>
             <tr v-for="(job,index) in azkabanJobs">
-                <td>{{job.project}}</td>
-                <td>{{job.flow}}</td>
+                <td>{{job.project | formatDescription}}</td>
+                <td>{{job.flow | formatDescription}}</td>
                 <td>{{job.user}}</td>
                 <td>{{job.email | formatDescription}}</td>
                 <td>{{job.description | formatDescription}}</td>
