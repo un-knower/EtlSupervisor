@@ -75,8 +75,7 @@
             showMeridian: false,  //是否出现 上下午
             initialDate: new Date(),
             startDate: "2017-01-01" //日期开始时间 也可以是new Date()只能选择以后的时间
-        })
-            .on("changeDate", function () {
+        }).on("changeDate", function () {
                 this.pickDateVal = $('#pickDate').val();
             });
     });

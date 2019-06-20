@@ -124,7 +124,7 @@
                 this.getLogs(this.keyWords, 1, this.pageSize, this.pickDateVal);
             },
             goto: function (index) {
-                var _this = this;
+                let _this = this;
                 if (index === _this.current) return;
                 _this.current = index;
                 _this.getLogs(_this.keyWords, _this.current, _this.pageSize, _this.pickDateVal)

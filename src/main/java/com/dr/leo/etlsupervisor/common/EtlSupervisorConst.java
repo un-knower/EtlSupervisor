@@ -16,4 +16,7 @@ public interface EtlSupervisorConst {
     String AZKABAN_PARENT_PATH = "azkaban";
 
     String ORI_POS_TYPE = "ori_pos";
+
+    String FTP = "ftp";
+    String MYJ_CODE = "R10001";
 }

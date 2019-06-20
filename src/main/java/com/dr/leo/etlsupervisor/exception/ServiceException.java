@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class ServiceException extends Exception {
+public class ServiceException extends RuntimeException {
     protected String errorMsg;
 
     public ServiceException(String errorMsg) {

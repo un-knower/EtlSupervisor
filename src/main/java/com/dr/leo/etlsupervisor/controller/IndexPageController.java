@@ -72,6 +72,11 @@ public class IndexPageController {
         return "azkaban_job";
     }
 
+    @GetMapping("/ftp_data_download")
+    public String ftpDataDownload() {
+        return "ftp_data_download";
+    }
+
     @GetMapping("/azkaban_job_execute_history")
     public ModelAndView azkabanJobExecuteHistory(String project, String flow, Integer pageNo, Integer pageSize) {
         log.info("project：" + project + " flow：" + flow);
