@@ -30,6 +30,46 @@
             </div>
         </div><!-- /.row -->
     </form>
+    <table class="table table-hover table-bordered">
+        <tr>
+            <th>任务编号</th>
+            <th>零售商编号</th>
+            <th>数据日期</th>
+            <th>远程地址</th>
+            <th>本地地址</th>
+            <th>提交时间</th>
+            <th>结束时间</th>
+            <th>数据类型</th>
+            <th>任务状态</th>
+            <th>选择操作</th>
+        </tr>
+        <tr v-for="(job,index) in downloadJobs">
+            <td>{{job.id}}</td>
+            <td>{{job.retailerCode}}</td>
+            <td>{{job.dataDate}}</td>
+            <td>{{job.remotePath}}</td>
+            <td>{{job.localPath}}</td>
+            <td>{{job.submitTime}}</td>
+            <td>{{job.endTime}}</td>
+            <td>{{job.dataType}}</td>
+            <td>
+                <div class="status" :class="job.mark">{{job.mark}}</div>
+            </td>
+            <td>
+                <div class="btn-group btn-group-sm pull-right">
+                    <button type="button" data-toggle="modal" data-target="#stopDownloadJobModal"
+                            data-whatever="@mdo" class="btn btn-danger" @click="showStopJobModal(job)">终 止
+                    </button>
+                    <button type="button" class="btn btn-info">日 志</button>
+                    <button type="button" data-toggle="modal" data-target="#deleteDownloadJobModal"
+                            data-whatever="@mdo" class="btn btn-danger" @click="showDeleteJobModal(job)">删 除
+                    </button>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <div th:include="comm/task/deleteDownloadJobModel"></div>
+    <div th:include="comm/task/stopDownloadJobModel"></div>
 </div>
 <script type="text/javascript">
     let currentDay = initDate();
@@ -79,15 +119,17 @@
         data: {
             retailerList: [{}],
             fileList: [],
-            realRowNumberList: [],
-            checkRowNumberList: [],
-            differenceNumList: [],
+            downloadJobs: [],
+            editType: "234242",
+            deleteJobId: 0,
+            stopJobId: 0,
             retailerSelected: '美宜佳',
             retailerCodeSelected: 'R10001',
             msg: "日常零售商数据采集!"
         },
         created() {
             this.initRetailer();
+            this.listDownloadTasks()
         },
         methods: {
             downloadData() {
@@ -97,11 +139,14 @@
             download(retailerCode, day, overwrite) {
                 const _this = this;
                 const url = "/retailer/data/ftp?retailerCode=" + retailerCode
-                    + "&day=" + day + "&overwrite=" + overwrite;
+                    + "&dataDate=" + day + "&dataType=ftp" + "&overwrite=" + overwrite + "&clearLocalFile=" + false;
                 axios.get(url).then(function (res) {
                     const success = res.data.success;
                     if (success) {
-                        _this.msg = retailerCode + " " + day + " 日的FTP数据下载成功！";
+                        _this.msg = retailerCode + " " + day + " 日的FTP数据下载任务提交成功！";
+                        window.location.reload();
+                    } else {
+                        _this.msg = res.data.msg;
                     }
                 }).catch(function (reason) {
                     console.log(reason);
@@ -120,6 +165,57 @@
                     _this.retailerList = res.data.payload;
                 }).catch(function (reason) {
                     console.log(reason)
+                });
+            },
+            listDownloadTasks() {
+                const url = "/retailer/data/list/tasks";
+                const _this = this;
+                axios.get(url).then(function (res) {
+                    _this.downloadJobs = res.data.payload.taskItems
+                }).catch(function (error) {
+                    console.log(error)
+                });
+            },
+            showDeleteJobModal(job) {
+                this.deleteJobId = job.id;
+                this.editType = "确认删除下载任务：" + job.id + " ?";
+            },
+            confirmDeleteDownloadJob() {
+                console.log(this.deleteJobId);
+                const url = "/retailer/data/delete/task/" + this.deleteJobId;
+                const _this = this;
+                axios.get(url).then(function (res) {
+                    const success = res.data.success;
+                    if (success) {
+                        _this.msg = "成功删除下载任务：" + _this.deleteJobId + "!";
+                        window.location.reload();
+                    } else {
+                        _this.msg = res.data.msg;
+                    }
+                }).catch(function (reason) {
+                    console.log(reason);
+                    _this.msg = reason;
+                });
+            },
+            showStopJobModal(job) {
+                this.stopJobId = job.id;
+                this.editType = "确认终止下载任务：" + job.id + " ?";
+            },
+            confirmStopDownloadJob() {
+                console.log(this.stopJobId);
+                const url = "/retailer/data/stop/task/" + this.stopJobId;
+                const _this = this;
+                axios.get(url).then(function (res) {
+                    const success = res.data.success;
+                    if (success) {
+                        _this.msg = "成功终止下载任务：" + _this.stopJobId + "!";
+                        window.location.reload();
+                    } else {
+                        _this.msg = res.data.msg;
+                    }
+                }).catch(function (reason) {
+                    console.log(reason);
+                    _this.msg = reason;
                 });
             }
         }

@@ -19,9 +19,9 @@ public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(ServiceException.class)
-    public RestResponseResult<String> serviceExceptionHandler(ServiceException e) {
+    public RestResponseResult<Object> serviceExceptionHandler(ServiceException e) {
         logger.error(e.getErrorMsg());
-        return RestResponseResult.failed(e.getErrorMsg());
+        return RestResponseResult.failed().message(e.getErrorMsg());
     }
 
     @ExceptionHandler(Exception.class)

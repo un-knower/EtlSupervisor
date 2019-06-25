@@ -2,6 +2,7 @@ package com.dr.leo.etlsupervisor.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.dr.leo.etlsupervisor.common.EtlSupervisorConst;
+import com.dr.leo.etlsupervisor.entity.EtlDataDownloadTask;
 import com.dr.leo.etlsupervisor.entity.EtlRetailerDataSource;
 import com.dr.leo.etlsupervisor.exception.ServiceException;
 import com.dr.leo.etlsupervisor.ftp.ConnectConfig;
@@ -28,10 +29,12 @@ import java.io.IOException;
 public class FtpFileServiceImpl implements FtpFileService {
     private final HdfsServiceImpl hdfsService;
     private final EtlRetailerDataSourceServiceImpl dataSourceService;
+    private final EtlDataDownloadTaskServiceImpl downloadTaskService;
 
-    public FtpFileServiceImpl(EtlRetailerDataSourceServiceImpl dataSourceService, HdfsServiceImpl hdfsService) {
+    public FtpFileServiceImpl(EtlRetailerDataSourceServiceImpl dataSourceService, HdfsServiceImpl hdfsService, EtlDataDownloadTaskServiceImpl downloadTaskService) {
         this.dataSourceService = dataSourceService;
         this.hdfsService = hdfsService;
+        this.downloadTaskService = downloadTaskService;
     }
 
     public void downloadMyjData(String day, boolean overwrite) throws IOException {
@@ -42,7 +45,8 @@ public class FtpFileServiceImpl implements FtpFileService {
         log.info("当前下载数据保存的本地路径:" + localPath);
         final String hdfsPath = getRetailerDataHdfsPath(dataSource, day);
         log.info("当前下载数据上传的hdfs路径:" + hdfsPath);
-        downloadRetailerData(dataSource, remotePath, localPath);
+
+        downloadRetailerData(dataSource, remotePath, localPath, day);
         hdfsService.upload(localPath, hdfsPath, overwrite);
     }
 
@@ -52,8 +56,7 @@ public class FtpFileServiceImpl implements FtpFileService {
         FtpHelper.download(connectConfig, remotePath, localPath);
     }
 
-    private void download(EtlRetailerDataSource dataSource, String remotePath, String localPath) throws IOException {
-
+    private void download(EtlRetailerDataSource dataSource, String remotePath, String localPath, String dataDay) throws IOException {
         ConnectConfig connectConfig = new ConnectConfig();
         connectConfig.setHost(dataSource.getHost())
                 .setPort(dataSource.getPort())
@@ -65,8 +68,18 @@ public class FtpFileServiceImpl implements FtpFileService {
     }
 
 
-    private void downloadRetailerData(EtlRetailerDataSource dataSource, String remotePath, String localSavePath) throws IOException {
-        download(dataSource, remotePath, localSavePath);
+    private void downloadRetailerData(EtlRetailerDataSource dataSource, String remotePath, String localSavePath, String dataDay) throws IOException {
+        EtlDataDownloadTask downloadTask = new EtlDataDownloadTask();
+        downloadTask.setRetailerCode(dataSource.getBannerCode());
+        downloadTask.setDataDate(dataDay);
+        downloadTask.setRemotePath(remotePath);
+        downloadTask.setLocalPath(localSavePath);
+        downloadTask.setSubmitTime(System.currentTimeMillis());
+        downloadTask.setEndTime(0L);
+        downloadTask.setMark("RUNNING");
+        downloadTaskService.save(downloadTask);
+        download(dataSource, remotePath, localSavePath, dataDay);
+
     }
 
 
