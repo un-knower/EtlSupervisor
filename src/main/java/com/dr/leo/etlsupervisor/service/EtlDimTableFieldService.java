@@ -1,6 +1,7 @@
 package com.dr.leo.etlsupervisor.service;
 
 import com.dr.leo.etlsupervisor.entity.EtlDimTableField;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -58,5 +59,14 @@ public interface EtlDimTableFieldService {
      * @return 维表配置
      */
     EtlDimTableField findByDbNameAndTableName(String dbName, String tableName);
+
+    /**
+     * 分页查询维表信息
+     *
+     * @param pageNo   当前页
+     * @param pageSize 分页大小
+     * @return 分页数据
+     */
+    Page<EtlDimTableField> findAllDimTables(int pageNo, int pageSize);
 
 }

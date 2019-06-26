@@ -2,6 +2,7 @@ package com.dr.leo.etlsupervisor.repository;
 
 import com.dr.leo.etlsupervisor.entity.EtlDimTableField;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,7 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
  * @since 1.0
  */
 @Repository
-public interface EtlDimTableFieldRepository extends JpaRepository<EtlDimTableField, Integer> {
+public interface EtlDimTableFieldRepository extends JpaRepository<EtlDimTableField, Integer>,
+        JpaSpecificationExecutor<EtlDimTableField> {
     /**
      * 更新维表信息
      *
@@ -57,4 +59,6 @@ public interface EtlDimTableFieldRepository extends JpaRepository<EtlDimTableFie
      * @return 维表配置
      */
     EtlDimTableField findByDbNameAndTableName(String dbName, String tableName);
+
+
 }

@@ -19,8 +19,8 @@
                 <th>操作</th>
             </tr>
             <tr v-for="(dim,index) in dimTableList">
-                <td>{{dim.dbName }}</td>
-                <td>{{dim.tableName}}</td>
+                <td>{{dim.dbName | formatDbName }}</td>
+                <td>{{dim.tableName }}</td>
                 <td>{{dim.field | formatDescription}}</td>
                 <td>{{dim.description }}</td>
                 <td>
@@ -37,7 +37,7 @@
                                 data-whatever="@mdo" class="btn btn-warning" @click="disableDimTable(dim.id)">禁 用
                         </button>
                         <button type="button" data-toggle="modal" data-target=""
-                                data-whatever="@mdo" class="btn btn-warning" @click="enableDimTable(dim.id)">启 用
+                                data-whatever="@mdo" class="btn btn-success" @click="enableDimTable(dim.id)">启 用
                         </button>
                         <button type="button" data-toggle="modal" data-target="#updateDimTableModel"
                                 data-whatever="@mdo"
@@ -47,6 +47,22 @@
                 </td>
             </tr>
         </table>
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li v-show="current != 1" @click="current-- && goto(current--)">
+                    <a href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li v-for="index in pages" @click="goto(index)"
+                    :class="{'active':current == index}" :key="index"><a href="#">{{index}}</a></li>
+                <li v-show="allPage != current && allPage != 0" @click="current++ && goto(current++)">
+                    <a href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
     <div th:include="comm/dimTable/createDimTableModel"></div>
     <div th:include="comm/dimTable/deleteDimTableModel"></div>
@@ -78,10 +94,36 @@
                 description: ""
             },
             deleteTableId: 0,
-            msg: "添加待刷新维表的字段信息"
+            msg: "添加待刷新维表的字段信息",
+            current: 1,
+            showItem: 10,
+            pageSize: 10,
+            allPage: 0,
+        },
+        computed: {
+            pages: function () {
+                var pag = [];
+                if (this.current < this.showItem) { //如果当前的激活的项 小于要显示的条数
+                    //总页数和要显示的条数那个大就显示多少条
+                    var i = Math.min(this.showItem, this.allPage);
+                    while (i) {
+                        pag.unshift(i--);
+                    }
+                } else { //当前页数大于显示页数了
+                    var middle = this.current - Math.floor(this.showItem / 2),//从哪里开始
+                        i = this.showItem;
+                    if (middle > (this.allPage - this.showItem)) {
+                        middle = (this.allPage - this.showItem) + 1
+                    }
+                    while (i--) {
+                        pag.push(middle++);
+                    }
+                }
+                return pag
+            }
         },
         created() {
-            this.getAllDimTables()
+            this.getAllDimTables(this.current, this.showItem)
         },
         filters: {
             formatDescription(desc) {
@@ -89,6 +131,13 @@
                     return desc.substring(0, 10) + "......"
                 } else {
                     return desc
+                }
+            },
+            formatDbName(dbName) {
+                if (dbName.length > 10) {
+                    return dbName.substring(0, 10) + "......"
+                } else {
+                    return dbName
                 }
             },
             formatStatus(disable) {
@@ -111,9 +160,15 @@
                 this.dimForm = dim;
                 this.editType = "更新Azkaban项目";
             },
-            getAllDimTables() {
+            goto: function (index) {
                 const _this = this;
-                const url = "/api/v1/dimTable/field/list";
+                if (index === _this.current) return;
+                _this.current = index;
+                _this.getAllDimTables(_this.current, _this.showItem);
+            },
+            getAllDimTables(pageNo, pageSize) {
+                const _this = this;
+                const url = "/api/v1/dimTable/field/page?pageNo=" + pageNo + "&pageSize=" + pageSize;
                 axios({
                     url: url,
                     method: 'get'
@@ -121,10 +176,14 @@
                     const resData = res.data;
                     console.log(resData);
                     if (resData.success) {
-                        _this.dimTableList = resData.payload.dimTableList
+                        _this.allPage = resData.payload.totalPages;
+                        _this.dimTableList = resData.payload.content
+
                     } else {
                         _this.msg = resData.msg
                     }
+                }).catch(function (error) {
+                    console.log(error)
                 })
             },
             saveDimTable() {
@@ -141,6 +200,7 @@
                     const data = res.data;
                     console.log(data);
                     if (data.success) {
+                        this.dimForm = {};
                         window.location.reload()
                     } else {
                         _this.msg = data.msg
@@ -167,6 +227,7 @@
                     const data = res.data;
                     console.log(data);
                     if (data.success) {
+                        this.dimForm = {};
                         window.location.reload()
                     } else {
                         _this.msg = data.msg

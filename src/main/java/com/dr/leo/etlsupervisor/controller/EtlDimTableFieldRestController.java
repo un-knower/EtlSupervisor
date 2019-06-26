@@ -5,6 +5,7 @@ import com.dr.leo.etlsupervisor.entity.EtlDimTableField;
 import com.dr.leo.etlsupervisor.exception.ServiceException;
 import com.dr.leo.etlsupervisor.params.EtlDimTableFieldDto;
 import com.dr.leo.etlsupervisor.service.impl.EtlDimTableFieldServiceImpl;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +35,12 @@ public class EtlDimTableFieldRestController extends BaseRestController {
         Map<String, List<EtlDimTableField>> data = new HashMap<>(1);
         data.put("dimTableList", etlDimTableFieldService.listAll());
         return success(data);
+    }
+
+    @GetMapping("/page")
+    public RestResponseResult dimTablePages(@RequestParam int pageNo, @RequestParam int pageSize) {
+        Page<EtlDimTableField> tables = etlDimTableFieldService.findAllDimTables(pageNo, pageSize);
+        return RestResponseResult.ok(tables);
     }
 
     @PostMapping("/add")
@@ -82,4 +89,6 @@ public class EtlDimTableFieldRestController extends BaseRestController {
         etlDimTableFieldService.disableOrNot(id, 0);
         return success();
     }
+
+
 }

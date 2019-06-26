@@ -3,6 +3,10 @@ package com.dr.leo.etlsupervisor.service.impl;
 import com.dr.leo.etlsupervisor.entity.EtlDimTableField;
 import com.dr.leo.etlsupervisor.repository.EtlDimTableFieldRepository;
 import com.dr.leo.etlsupervisor.service.EtlDimTableFieldService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,5 +56,12 @@ public class EtlDimTableFieldServiceImpl implements EtlDimTableFieldService {
     @Override
     public EtlDimTableField findByDbNameAndTableName(String dbName, String tableName) {
         return dimTableFieldRepository.findByDbNameAndTableName(dbName, tableName);
+    }
+
+    @Override
+    public Page<EtlDimTableField> findAllDimTables(int pageNo, int pageSize) {
+        final int currentPageNo = pageNo > 0 ? pageNo - 1 : 0;
+        Pageable pageable = PageRequest.of(currentPageNo, pageSize, Sort.Direction.ASC, "dbName");
+        return dimTableFieldRepository.findAll(pageable);
     }
 }

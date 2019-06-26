@@ -135,7 +135,7 @@
                 var _this = this;
                 axios.get(url).then(function (res) {
                     console.log(res.data.payload)
-                    _this.allPage = res.data.payload.totalPages
+                    _this.allPage = res.data.payload.totalPages;
                     _this.logs = res.data.payload.content
                 }).catch(function (error) {
                     console.log(error);
