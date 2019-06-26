@@ -1,0 +1,216 @@
+<div th:with="pageTitle = '维表管理'" th:include="comm/public/header" xmlns:th="http://www.w3.org/1999/xhtml"></div>
+<body xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:include="comm/public/nav"></div>
+<div id="app">
+    <div class="container">
+        <div class="clearfix">
+            <button type="button" data-toggle="modal" data-target="#createDimTableModal" data-whatever="@mdo"
+                    class="btn btn-info pull-right" style="margin-bottom: 20px; " @click="showCreateDimTableModal()">
+                创建待刷新维表
+            </button>
+        </div>
+        <table class="table table-hover table-bordered">
+            <tr>
+                <th>数据库名</th>
+                <th>数据表名</th>
+                <th>字段</th>
+                <th>描述</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            <tr v-for="(dim,index) in dimTableList">
+                <td>{{dim.dbName }}</td>
+                <td>{{dim.tableName}}</td>
+                <td>{{dim.field | formatDescription}}</td>
+                <td>{{dim.description }}</td>
+                <td>
+                    <div class="status" :class="dim.disable == 0 ? 'SUCCESS':'DANGER'">
+                        {{dim.disable | formatStatus}}
+                    </div>
+                </td>
+                <td>
+                    <div class="btn-group btn-group-sm pull-right">
+                        <button type="button" data-toggle="modal" data-target="#deleteDimTableModel"
+                                data-whatever="@mdo" class="btn btn-danger" @click="showDeleteDimTableModal(dim)">删 除
+                        </button>
+                        <button type="button" data-toggle="modal" data-target=""
+                                data-whatever="@mdo" class="btn btn-warning" @click="disableDimTable(dim.id)">禁 用
+                        </button>
+                        <button type="button" data-toggle="modal" data-target=""
+                                data-whatever="@mdo" class="btn btn-warning" @click="enableDimTable(dim.id)">启 用
+                        </button>
+                        <button type="button" data-toggle="modal" data-target="#updateDimTableModel"
+                                data-whatever="@mdo"
+                                class="btn btn-info pull-right" @click="showUpdateDimTableModal(dim)">编 辑
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div th:include="comm/dimTable/createDimTableModel"></div>
+    <div th:include="comm/dimTable/deleteDimTableModel"></div>
+    <div th:include="comm/dimTable/updateDimTableModel"></div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $("[data-toggle='popover']").popover();
+    });
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            dimTableList: [
+                {
+                    id: 1,
+                    dbName: 'leo_work',
+                    tableName: 'flush_dim_table',
+                    field: 'leo',
+                    description: "leo.jie@datarealglobal.com",
+                    disable: 0
+                }
+            ],
+            editType: "",
+            dimForm: {
+                dbName: "",
+                tableName: "",
+                field: "",
+                description: ""
+            },
+            deleteTableId: 0,
+            msg: "添加待刷新维表的字段信息"
+        },
+        created() {
+            this.getAllDimTables()
+        },
+        filters: {
+            formatDescription(desc) {
+                if (desc.length > 10) {
+                    return desc.substring(0, 10) + "......"
+                } else {
+                    return desc
+                }
+            },
+            formatStatus(disable) {
+                if (disable === 0) {
+                    return "启用"
+                } else {
+                    return "禁用"
+                }
+            }
+        },
+        methods: {
+            showCreateDimTableModal() {
+                this.editType = "创建待刷新维表";
+            },
+            showDeleteDimTableModal(dim) {
+                this.deleteTableId = dim.id;
+                this.editType = "确认删除维表：" + dim.tableName + " ?";
+            },
+            showUpdateDimTableModal(dim) {
+                this.dimForm = dim;
+                this.editType = "更新Azkaban项目";
+            },
+            getAllDimTables() {
+                const _this = this;
+                const url = "/api/v1/dimTable/field/list";
+                axios({
+                    url: url,
+                    method: 'get'
+                }).then(function (res) {
+                    const resData = res.data;
+                    console.log(resData);
+                    if (resData.success) {
+                        _this.dimTableList = resData.payload.dimTableList
+                    } else {
+                        _this.msg = resData.msg
+                    }
+                })
+            },
+            saveDimTable() {
+                console.log(this.dimForm);
+                const _this = this;
+                const url = "/api/v1/dimTable/field/add";
+                axios(
+                    {
+                        url: url,
+                        method: 'post',
+                        data: this.dimForm
+                    }
+                ).then(function (res) {
+                    const data = res.data;
+                    console.log(data);
+                    if (data.success) {
+                        window.location.reload()
+                    } else {
+                        _this.msg = data.msg
+                    }
+                })
+            },
+            updateDimTable() {
+                console.log(this.dimForm);
+                const _this = this;
+                const url = "/api/v1/dimTable/field/update";
+                axios(
+                    {
+                        url: url,
+                        method: 'post',
+                        data: {
+                            id: this.dimForm.id,
+                            dbName: this.dimForm.dbName,
+                            tableName: this.dimForm.tableName,
+                            field: this.dimForm.field,
+                            description: this.dimForm.description
+                        }
+                    }
+                ).then(function (res) {
+                    const data = res.data;
+                    console.log(data);
+                    if (data.success) {
+                        window.location.reload()
+                    } else {
+                        _this.msg = data.msg
+                    }
+                })
+            },
+            deleteDimTable() {
+                const url = "/api/v1/dimTable/field/delete/" + this.deleteTableId;
+                axios({
+                    url: url,
+                    method: 'get'
+                }).then(function (res) {
+                    const resData = res.data;
+                    if (resData.success) {
+                        window.location.reload()
+                    }
+                });
+            },
+            disableDimTable(id) {
+                const url = "/api/v1/dimTable/field/disable/" + id;
+                axios({
+                    url: url,
+                    method: 'get'
+                }).then(function (res) {
+                    const resData = res.data;
+                    if (resData.success) {
+                        window.location.reload()
+                    }
+                });
+            },
+            enableDimTable(id) {
+                const url = "/api/v1/dimTable/field/enable/" + id;
+                axios({
+                    url: url,
+                    method: 'get'
+                }).then(function (res) {
+                    const resData = res.data;
+                    if (resData.success) {
+                        window.location.reload()
+                    }
+                });
+            }
+        }
+    })
+</script>
+</body>
+</html>

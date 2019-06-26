@@ -1,0 +1,16 @@
+{
+  "dbs": [
+    {
+      "id": "1",
+      "name": "db1",
+      "desc": "测试数据库",
+      "connectId": 1
+    },
+    {
+      "id": "2",
+      "name": "db2",
+      "desc": "测试数据库2",
+      "connectId": 1
+    }
+  ]
+}

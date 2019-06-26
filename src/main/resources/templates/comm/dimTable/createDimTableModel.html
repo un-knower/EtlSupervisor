@@ -1,0 +1,42 @@
+<div class="modal fade" id="createDimTableModal" tabindex="-1" role="dialog" aria-labelledby="createDimTableModal"
+     data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">{{ editType }}</h4>
+            </div>
+            <div th:include="comm/public/alert" xmlns:th="http://www.w3.org/1999/xhtml"></div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="dbName" class="control-label">维表输出数据库名:</label>
+                        <input type="text" class="form-control" id="dbName" v-model="dimForm.dbName"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="tableName" class="control-label">维表输出数据表名:</label>
+                        <input type="text" class="form-control" id="tableName" v-model="dimForm.tableName"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tableField" class="control-label">字段:</label>
+                        <textarea  class="form-control" id="tableField" v-model="dimForm.field"
+                            style="height: 400px;"       placeholder="输入维表字段，如:goods_code string comment '商品号',...">
+
+                        </textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tableDescription" class="control-label">维表描述:</label>
+                        <textarea class="form-control" id="tableDescription" v-model="dimForm.description"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" @click="saveDimTable()">确认保存</button>
+            </div>
+        </div>
+    </div>
+</div>

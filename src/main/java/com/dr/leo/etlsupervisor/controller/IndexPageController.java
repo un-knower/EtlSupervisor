@@ -77,6 +77,11 @@ public class IndexPageController {
         return "ftp_data_download";
     }
 
+    @GetMapping("/dim_table")
+    public String dimTable() {
+        return "dim_table";
+    }
+
     @GetMapping("/azkaban_job_execute_history")
     public ModelAndView azkabanJobExecuteHistory(String project, String flow, Integer pageNo, Integer pageSize) {
         log.info("project：" + project + " flow：" + flow);

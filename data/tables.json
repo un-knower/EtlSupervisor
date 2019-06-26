@@ -1,0 +1,36 @@
+{
+  "tables": [
+    {
+      "dbId": 1,
+      "name": "table1",
+      "desc": "这是测试表",
+      "fields": [
+        {
+          "name": "字段1",
+          "length": 20,
+          "type": "varchar",
+          "desc": "这是一个测试字段"
+        },
+        {
+          "name": "字段2",
+          "length": 20,
+          "type": "varchar",
+          "desc": "这是一个测试字段2"
+        }
+      ]
+    },
+    {
+      "dbId": 2,
+      "name": "table1",
+      "desc": "这是测试表",
+      "fields": [
+        {
+          "name": "字段1",
+          "length": 20,
+          "type": "varchar",
+          "desc": "这是一个测试字段"
+        }
+      ]
+    }
+  ]
+}

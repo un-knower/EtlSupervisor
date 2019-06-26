@@ -2,6 +2,7 @@ package com.dr.leo.etlsupervisor.thread;
 
 import com.dr.leo.etlsupervisor.common.RestResponseResult;
 import com.dr.leo.etlsupervisor.exception.ServiceException;
+import com.dr.leo.etlsupervisor.task.ICallable;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.*;
@@ -21,6 +22,8 @@ public class EtlDownloadTaskThreadPool {
             new Thread(r, "LeoEtlSupervisor-EtlDownloadTaskThreadPool-" + r.hashCode()));
     private final ConcurrentHashMap<String, FutureTask<RestResponseResult>>
             taskMap = new ConcurrentHashMap<>(8);
+    private final ConcurrentHashMap<String, ICallable<RestResponseResult>>
+            taskSubmitMap = new ConcurrentHashMap<>(8);
 
 
     private static class TaskThreadPoolHolder {
@@ -31,13 +34,14 @@ public class EtlDownloadTaskThreadPool {
         return TaskThreadPoolHolder.instance;
     }
 
-    public void addDownloadTaskJob(String taskId, Callable<RestResponseResult> task) {
+    public void addDownloadTaskJob(String taskId, ICallable<RestResponseResult> task) {
         if (taskMap.containsKey(taskId)) {
             throw new ServiceException(taskId + " 任务应已经提交了！");
         }
         FutureTask<RestResponseResult> futureTask = new FutureTask<>(task);
         taskPool.submit(futureTask);
         taskMap.put(taskId, futureTask);
+        taskSubmitMap.put(taskId, task);
         EtlDownloadTaskCallbackThread.getInstance().start(taskId);
     }
 
@@ -61,7 +65,9 @@ public class EtlDownloadTaskThreadPool {
         if (task == null) {
             return true;
         } else {
-            task.cancel(true);
+            if (!task.isCancelled() && !Thread.currentThread().isInterrupted()) {
+                task.cancel(true);
+            }
             return clearOneTask(taskId);
         }
     }

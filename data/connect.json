@@ -1,0 +1,16 @@
+{
+  "connects": [
+    {
+      "id": 1,
+      "url": "jdbc:mysql/localhost:3306",
+      "name": "测试连接",
+      "desc": "连接描述"
+    },
+    {
+      "id": 2,
+      "url": "jdbc:mysql/localhost:3306",
+      "name": "测试连接",
+      "desc": "连接描述"
+    }
+  ]
+}
