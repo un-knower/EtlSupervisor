@@ -1,0 +1,120 @@
+<div th:with="pageTitle = '系统更新记录'" th:include="comm/public/header" xmlns:th="http://www.w3.org/1999/xhtml"></div>
+<body xmlns:th="http://www.w3.org/1999/xhtml">
+<div th:include="comm/public/nav"></div>
+<div class="container">
+    <div class="page-header">
+        <h1 id="timeline">系统更新记录</h1>
+    </div>
+    <ul class="timeline">
+        <li>
+            <div class="timeline-badge"></div>
+            <div class="timeline-panel">
+                <div class="timeline-heading">
+                    <h4 class="timeline-title">系统初创</h4>
+                    <p>
+                        <small class="text-muted"><i class="glyphicon glyphicon-time"></i> 2018-10-10
+                        </small>
+                    </p>
+                </div>
+                <div class="timeline-body">
+                    <p>ETL监控系统项目初创，旨在为DataReal内部的ETL环节提供日志监控、数据异常预警等功能。
+                        加入功能：ETL系统日志输出查看、流水数据量日常折线图预警
+                    </p>
+                </div>
+            </div>
+        </li>
+        <li class="timeline-inverted">
+            <div class="timeline-badge warning"></div>
+            <div class="timeline-panel">
+                <div class="timeline-heading">
+                    <h4 class="timeline-title">邮件预警</h4>
+                    <p>
+                        <small class="text-muted"><i class="glyphicon glyphicon-time"></i> 2018-11-10
+                        </small>
+                    </p>
+                </div>
+                <div class="timeline-body">
+                    <p>危险日志邮件预警</p>
+
+                </div>
+            </div>
+        </li>
+        <li>
+            <div class="timeline-badge danger"></div>
+            <div class="timeline-panel">
+                <div class="timeline-heading">
+                    <h4 class="timeline-title">Azkaban模板与Azkaban任务管理</h4>
+                    <p>
+                        <small class="text-muted"><i class="glyphicon glyphicon-time"></i> 2018-12-10
+                        </small>
+                    </p>
+                </div>
+                <div class="timeline-body">
+                    <p>新增功能：集成azkaban,调用Azkaban API实现Azkaban任务执行、执行状态查看，Azkaban spark job模板制作功能</p>
+                </div>
+            </div>
+        </li>
+        <li class="timeline-inverted">
+            <div class="timeline-panel">
+                <div class="timeline-heading">
+                    <h4 class="timeline-title">零售商数据采集监控</h4>
+                    <p>
+                        <small class="text-muted"><i class="glyphicon glyphicon-time"></i> 2019-03-10
+                        </small>
+                    </p>
+                </div>
+                <div class="timeline-body">
+                    <p>零售商数据FTP采集后，采集数据的各个文件条目数输出至页面，监控数据缺失等等</p>
+                </div>
+            </div>
+        </li>
+        <li>
+            <div class="timeline-badge info"></div>
+            <div class="timeline-panel">
+                <div class="timeline-heading">
+                    <h4 class="timeline-title">集成FTP数据下载</h4>
+                    <p>
+                        <small class="text-muted"><i class="glyphicon glyphicon-time"></i> 2019-06-10
+                        </small>
+                    </p>
+                </div>
+                <div class="timeline-body">
+                    <p>集成FTP数据下载，页面上手动提交下载任务，系统定时执行下载任务，下载后数据校验，并自动上传数据至Hdfs</p>
+                </div>
+            </div>
+        </li>
+
+        <li class="timeline-inverted">
+            <div class="timeline-panel">
+                <div class="timeline-heading">
+                    <h4 class="timeline-title">动态添加待刷新维表</h4>
+                    <p>
+                        <small class="text-muted"><i class="glyphicon glyphicon-time"></i> 2019-06-21
+                        </small>
+                    </p>
+                </div>
+                <div class="timeline-body">
+                    <p>需要刷新的维表，本地视图创建完成后，在系统中配置，数据库、数据表、字段等相关信息！而不用重新打包程序！</p>
+                </div>
+            </div>
+        </li>
+
+        <li>
+            <div class="timeline-badge success"></div>
+            <div class="timeline-panel">
+                <div class="timeline-heading">
+                    <h4 class="timeline-title">集成钉钉预警</h4>
+                    <p>
+                        <small class="text-muted"><i class="glyphicon glyphicon-time"></i> 2019-06-28
+                        </small>
+                    </p>
+                </div>
+                <div class="timeline-body">
+                    <p>系统中的异常状态信息，通过钉钉群的机器人预警，及时通知相关人员去处理。</p>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

@@ -82,6 +82,11 @@ public class IndexPageController {
         return "dim_table";
     }
 
+    @GetMapping("/update_record")
+    public String updateRecord() {
+        return "update_record";
+    }
+
     @GetMapping("/azkaban_job_execute_history")
     public ModelAndView azkabanJobExecuteHistory(String project, String flow, Integer pageNo, Integer pageSize) {
         log.info("project：" + project + " flow：" + flow);
