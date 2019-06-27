@@ -28,13 +28,9 @@ public class RetailerDataDownloadTask implements ICallable<RestResponseResult> {
     @Override
     public RestResponseResult call() throws Exception {
         log.info("子线程：" + Thread.currentThread().getName() + " 正在下载零售商数据！");
-        while (!isStop && !Thread.currentThread().isInterrupted()) {
-            if (EtlSupervisorConst.MYJ_CODE.equals(downloadJobParam.getRetailerCode())) {
-                ftpFileService.downloadMyjData(downloadJobParam.getDataDate(), downloadJobParam.isOverwrite());
-                break;
-            }
+        if (EtlSupervisorConst.MYJ_CODE.equals(downloadJobParam.getRetailerCode())) {
+            ftpFileService.downloadMyjData(downloadJobParam.getDataDate(), downloadJobParam.isOverwrite());
         }
-
         return RestResponseResult.ok().message("success");
     }
 

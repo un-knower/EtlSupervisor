@@ -31,4 +31,21 @@ public interface EtlDataDownloadTaskRepository extends JpaRepository<EtlDataDown
     void updateTaskMark(@Param(value = "taskId") int taskId,
                         @Param(value = "mark") String mark,
                         @Param(value = "endTime") long endTime);
+
+    /**
+     * 更改任务状态
+     *
+     * @param mark         标记状态
+     * @param endTime      结束时间
+     * @param retailerCode 零售商编号
+     * @param dataDate     数据日期
+     */
+    @Query(value = "update EtlDataDownloadTask set mark=:mark,endTime=:endTime where " +
+            "retailerCode=:retailerCode and dataDate=:dataDate and mark='RUNNING'")
+    @Transactional(rollbackFor = {Exception.class})
+    @Modifying
+    void updateTaskMark(@Param(value = "mark") String mark,
+                        @Param(value = "endTime") long endTime,
+                        @Param(value = "retailerCode") String retailerCode,
+                        @Param(value = "dataDate") String dataDate);
 }

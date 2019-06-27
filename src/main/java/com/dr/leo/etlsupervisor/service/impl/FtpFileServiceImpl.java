@@ -2,7 +2,9 @@ package com.dr.leo.etlsupervisor.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.dr.leo.etlsupervisor.common.EtlSupervisorConst;
+import com.dr.leo.etlsupervisor.common.IoUtil;
 import com.dr.leo.etlsupervisor.entity.EtlDataDownloadTask;
+import com.dr.leo.etlsupervisor.entity.EtlFileCheckRecord;
 import com.dr.leo.etlsupervisor.entity.EtlRetailerDataSource;
 import com.dr.leo.etlsupervisor.exception.ServiceException;
 import com.dr.leo.etlsupervisor.ftp.ConnectConfig;
@@ -13,6 +15,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * ftp数据下载到临时目录里
@@ -30,11 +35,14 @@ public class FtpFileServiceImpl implements FtpFileService {
     private final HdfsServiceImpl hdfsService;
     private final EtlRetailerDataSourceServiceImpl dataSourceService;
     private final EtlDataDownloadTaskServiceImpl downloadTaskService;
+    private final EtlFileCheckRecordServiceImpl checkRecordService;
 
-    public FtpFileServiceImpl(EtlRetailerDataSourceServiceImpl dataSourceService, HdfsServiceImpl hdfsService, EtlDataDownloadTaskServiceImpl downloadTaskService) {
+    public FtpFileServiceImpl(EtlRetailerDataSourceServiceImpl dataSourceService, HdfsServiceImpl hdfsService,
+                              EtlDataDownloadTaskServiceImpl downloadTaskService, EtlFileCheckRecordServiceImpl checkRecordService) {
         this.dataSourceService = dataSourceService;
         this.hdfsService = hdfsService;
         this.downloadTaskService = downloadTaskService;
+        this.checkRecordService = checkRecordService;
     }
 
     public void downloadMyjData(String day, boolean overwrite) throws IOException {
@@ -45,9 +53,62 @@ public class FtpFileServiceImpl implements FtpFileService {
         log.info("当前下载数据保存的本地路径:" + localPath);
         final String hdfsPath = getRetailerDataHdfsPath(dataSource, day);
         log.info("当前下载数据上传的hdfs路径:" + hdfsPath);
-
         downloadRetailerData(dataSource, remotePath, localPath, day);
+        //文件行数校验
+        checkFileRecord(EtlSupervisorConst.MYJ_CODE, day, localPath);
+        checkMyjFileRecord(EtlSupervisorConst.MYJ_CODE, day, localPath);
         hdfsService.upload(localPath, hdfsPath, overwrite);
+        downloadTaskService.updateMarkOfOneTask("SUCCESS", System.currentTimeMillis(),
+                EtlSupervisorConst.MYJ_CODE, day);
+    }
+
+    private void checkFileRecord(String retailerCode, String day, String localPath) {
+        File localFile = new File(localPath);
+        if (!localFile.exists()) {
+            return;
+        }
+        String[] fileNames = localFile.list();
+        if (fileNames == null || fileNames.length == 0) {
+            return;
+        }
+        for (String fileName : fileNames) {
+            final int fileLineNum = IoUtil.getLineNumber(localPath.concat(File.separator).concat(fileName));
+            checkRecordService.deleteOne(retailerCode, fileName, "real");
+            EtlFileCheckRecord etlFileCheckRecord = new EtlFileCheckRecord();
+            etlFileCheckRecord.setBanner(retailerCode);
+            etlFileCheckRecord.setDay(day);
+            etlFileCheckRecord.setFileType("real");
+            etlFileCheckRecord.setFileName(fileName);
+            etlFileCheckRecord.setRowNumber(fileLineNum);
+            etlFileCheckRecord.setLastUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
+            checkRecordService.saveCheckFileRecord(etlFileCheckRecord);
+        }
+
+    }
+
+    private void checkMyjFileRecord(String retailerCode, String day, String localPath) {
+        final String filePath = localPath.concat(File.separator)
+                .concat("bigdata_checklist_" + day.replaceAll("-", "_")).concat(".DAT");
+        final File checkFile = new File(filePath);
+        if (!checkFile.exists()) {
+            return;
+        }
+        List<String> checkLines = IoUtil.readLines(checkFile);
+        checkLines.forEach(line -> {
+            String[] content = line.split("\\|");
+            if (content.length == 2) {
+                final String fileName = content[0].trim().concat("_").concat(day.replaceAll("-", "_")).concat(".DAT");
+                checkRecordService.deleteOne(retailerCode, fileName, "check");
+                EtlFileCheckRecord etlFileCheckRecord = new EtlFileCheckRecord();
+                etlFileCheckRecord.setBanner(retailerCode);
+                etlFileCheckRecord.setDay(day);
+                etlFileCheckRecord.setFileType("check");
+                etlFileCheckRecord.setFileName(fileName);
+                etlFileCheckRecord.setRowNumber(Integer.parseInt(content[1]));
+                etlFileCheckRecord.setLastUpdateTime(Timestamp.valueOf(LocalDateTime.now()));
+                checkRecordService.saveCheckFileRecord(etlFileCheckRecord);
+            }
+        });
     }
 
 
@@ -79,7 +140,6 @@ public class FtpFileServiceImpl implements FtpFileService {
         downloadTask.setMark("RUNNING");
         downloadTaskService.save(downloadTask);
         download(dataSource, remotePath, localSavePath, dataDay);
-
     }
 
 
@@ -126,5 +186,6 @@ public class FtpFileServiceImpl implements FtpFileService {
         }
         return localFile.getPath();
     }
+
 
 }

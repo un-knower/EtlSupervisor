@@ -26,4 +26,20 @@ public interface EtlFileCheckRecordService {
      * @return 记录列表
      */
     List<EtlFileCheckRecord> checkRecordsByBanner(String retailerCode);
+
+    /**
+     * 添加文件检查记录
+     *
+     * @param fileCheckRecord 文件检查记录
+     */
+    void saveCheckFileRecord(EtlFileCheckRecord fileCheckRecord);
+
+    /**
+     * 删除一条记录
+     *
+     * @param retailerCode 零售商code
+     * @param fileName     文件名
+     * @param fileType     文件类型
+     */
+    void deleteOne(String retailerCode, String fileName, String fileType);
 }

@@ -48,4 +48,9 @@ public class EtlDataDownloadTaskServiceImpl implements EtlDataDownloadTaskServic
     public void updateMarkOfOneTask(int taskId, String mark) {
         downloadTaskRepository.updateTaskMark(taskId, mark, System.currentTimeMillis());
     }
+
+    public void updateMarkOfOneTask(String mark, long endTime, String retailerCode, String dataDate) {
+        downloadTaskRepository.updateTaskMark(mark, endTime, retailerCode, dataDate);
+    }
+
 }

@@ -41,16 +41,19 @@ public class EtlDownloadTaskCallbackThread {
                     if (task.isDone()) {
                         log.info("task {} 已经执行完成！", taskId);
                         try {
-                            System.out.println(task.get().getMsg());
+                            RestResponseResult result = task.get();
+                            System.out.println(result.getMsg());
+                            break;
                         } catch (InterruptedException | ExecutionException e) {
                             e.printStackTrace();
+                            break;
                         }
-                        break;
                     } else if (task.isCancelled()) {
                         log.info("task {} 已经被取消！", taskId);
                         break;
                     } else {
                         //log.info("task {} 在运行！", taskId);
+                        //break;
                     }
                 }
             }

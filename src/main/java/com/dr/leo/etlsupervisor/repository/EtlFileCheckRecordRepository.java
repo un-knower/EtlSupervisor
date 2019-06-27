@@ -3,6 +3,7 @@ package com.dr.leo.etlsupervisor.repository;
 import com.dr.leo.etlsupervisor.entity.EtlFileCheckRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,4 +30,14 @@ public interface EtlFileCheckRecordRepository extends JpaRepository<EtlFileCheck
      * @return 校验列表
      */
     List<EtlFileCheckRecord> findAllByBanner(String banner);
+
+    /**
+     * 删除一条记录
+     *
+     * @param retailerCode 零售商code
+     * @param fileName     文件名
+     * @param fileType     文件类型
+     */
+    @Transactional(rollbackFor = {Exception.class})
+    void deleteByBannerAndFileNameAndFileType(String retailerCode, String fileName, String fileType);
 }

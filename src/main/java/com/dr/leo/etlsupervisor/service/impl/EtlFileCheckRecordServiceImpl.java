@@ -31,4 +31,14 @@ public class EtlFileCheckRecordServiceImpl implements EtlFileCheckRecordService 
     public List<EtlFileCheckRecord> checkRecordsByBanner(String retailerCode) {
         return etlFileCheckRecordRepository.findAllByBanner(retailerCode);
     }
+
+    @Override
+    public void saveCheckFileRecord(EtlFileCheckRecord fileCheckRecord) {
+        etlFileCheckRecordRepository.save(fileCheckRecord);
+    }
+
+    @Override
+    public void deleteOne(String retailerCode, String fileName, String fileType) {
+        etlFileCheckRecordRepository.deleteByBannerAndFileNameAndFileType(retailerCode, fileName, fileType);
+    }
 }
