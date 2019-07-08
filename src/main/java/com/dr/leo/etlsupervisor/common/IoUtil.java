@@ -1,7 +1,11 @@
 package com.dr.leo.etlsupervisor.common;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -10,6 +14,19 @@ import java.util.List;
  * @date :2019/2/15 13:37
  */
 public class IoUtil {
+    public static Boolean deleteDir(String absPath) {
+        try {
+            System.out.println("删除目录：");
+            Files.walk(Paths.get(absPath)).sorted(Comparator.reverseOrder()).map(Path::toFile)
+                    .peek(System.out::println).forEach(File::delete);
+            System.out.println("清空目录：" + absPath + "成功");
+            return Boolean.TRUE;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Boolean.FALSE;
+    }
+
     public static void toFile(File saveFile, String content) {
         File parent = saveFile.getParentFile();
         if (!parent.exists()) {

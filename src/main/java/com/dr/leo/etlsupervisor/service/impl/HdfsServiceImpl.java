@@ -19,9 +19,9 @@ import java.io.IOException;
 @Service
 public class HdfsServiceImpl implements HdfsService {
     @Override
-    public void upload(String localFilePath, String hdfsFilePath, boolean overwrite) throws IOException {
+    public void upload(String localFilePath, String hdfsFilePath) throws IOException {
         HdfsFilePlugin hdfsFilePlugin = new HdfsFilePlugin();
-        hdfsFilePlugin.uploadDir(localFilePath, hdfsFilePath, overwrite);
+        hdfsFilePlugin.uploadDir(localFilePath, hdfsFilePath);
         hdfsFilePlugin.closeDfs();
     }
 }

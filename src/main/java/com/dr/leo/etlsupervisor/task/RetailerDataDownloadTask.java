@@ -31,6 +31,9 @@ public class RetailerDataDownloadTask implements ICallable<RestResponseResult> {
         if (EtlSupervisorConst.MYJ_CODE.equals(downloadJobParam.getRetailerCode())) {
             ftpFileService.downloadMyjData(downloadJobParam.getDataDate(), downloadJobParam.isOverwrite());
         }
+        if (EtlSupervisorConst.SEVEN_CODE.equals(downloadJobParam.getRetailerCode())) {
+            ftpFileService.download711Data(downloadJobParam.getDataDate(), downloadJobParam.isOverwrite());
+        }
         return RestResponseResult.ok().message("success");
     }
 

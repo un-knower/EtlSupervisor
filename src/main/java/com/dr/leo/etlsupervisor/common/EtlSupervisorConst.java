@@ -19,4 +19,5 @@ public interface EtlSupervisorConst {
 
     String FTP = "ftp";
     String MYJ_CODE = "R10001";
+    String SEVEN_CODE = "R10005";
 }

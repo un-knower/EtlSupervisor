@@ -64,18 +64,11 @@ public class HdfsFilePlugin {
         }
         for (File lFile : localDirFiles) {
             if (lFile.isDirectory()) {
-                upload(lFile.getPath(), dfsDirPath);
+                uploadDir(lFile.getPath(), dfsDirPath);
             } else {
                 upload(lFile.getPath(), dfsDirPath + lFile.getName());
             }
         }
-    }
-
-    public void uploadDir(String localDirPath, String dfsDirPath, boolean overwrite) throws IOException {
-        if (overwrite) {
-            delete(dfsDirPath);
-        }
-        uploadDir(localDirPath, dfsDirPath);
     }
 
     public void mkdir(String dfsFilePath) throws IOException {

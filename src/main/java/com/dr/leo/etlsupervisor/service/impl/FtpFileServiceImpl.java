@@ -45,11 +45,26 @@ public class FtpFileServiceImpl implements FtpFileService {
         this.checkRecordService = checkRecordService;
     }
 
+    public void download711Data(String day, boolean overwrite) throws IOException {
+        EtlRetailerDataSource dataSource = dataSourceService.findFtpDataSource(EtlSupervisorConst.SEVEN_CODE);
+        final String remotePath = getSevenDownloadRemotePath(dataSource, day);
+        log.info("当前下载数据的远程地址:" + remotePath);
+        final String localPath = getSevenDownloadLocalSavePath(dataSource, day, overwrite);
+        log.info("当前下载数据保存的本地路径:" + localPath);
+        final String hdfsPath = getRetailerDataHdfsPath(dataSource, day);
+        log.info("当前下载数据上传的hdfs路径:" + hdfsPath);
+        downloadRetailerData(dataSource, remotePath, localPath, day);
+        //文件行数校验
+        checkFileRecord(EtlSupervisorConst.SEVEN_CODE, day, localPath);
+        hdfsService.upload(localPath, hdfsPath);
+        downloadTaskService.updateMarkOfOneTask("SUCCESS", System.currentTimeMillis(), EtlSupervisorConst.SEVEN_CODE, day);
+    }
+
     public void downloadMyjData(String day, boolean overwrite) throws IOException {
         EtlRetailerDataSource dataSource = dataSourceService.findFtpDataSource(EtlSupervisorConst.MYJ_CODE);
         final String remotePath = getMyjDownloadRemotePath(dataSource, day);
         log.info("当前下载数据的远程地址:" + remotePath);
-        final String localPath = getMyjDownloadLocalSavePath(dataSource, day);
+        final String localPath = getMyjDownloadLocalSavePath(dataSource, day, overwrite);
         log.info("当前下载数据保存的本地路径:" + localPath);
         final String hdfsPath = getRetailerDataHdfsPath(dataSource, day);
         log.info("当前下载数据上传的hdfs路径:" + hdfsPath);
@@ -57,9 +72,8 @@ public class FtpFileServiceImpl implements FtpFileService {
         //文件行数校验
         checkFileRecord(EtlSupervisorConst.MYJ_CODE, day, localPath);
         checkMyjFileRecord(EtlSupervisorConst.MYJ_CODE, day, localPath);
-        hdfsService.upload(localPath, hdfsPath, overwrite);
-        downloadTaskService.updateMarkOfOneTask("SUCCESS", System.currentTimeMillis(),
-                EtlSupervisorConst.MYJ_CODE, day);
+        hdfsService.upload(localPath, hdfsPath);
+        downloadTaskService.updateMarkOfOneTask("SUCCESS", System.currentTimeMillis(), EtlSupervisorConst.MYJ_CODE, day);
     }
 
     private void checkFileRecord(String retailerCode, String day, String localPath) {
@@ -148,11 +162,17 @@ public class FtpFileServiceImpl implements FtpFileService {
      *
      * @param dataSource 数据源元数据配置
      * @param day        日期
+     * @param overwrite  是否覆盖
      * @return 本地下载文件
      */
-    private String getMyjDownloadLocalSavePath(EtlRetailerDataSource dataSource, String day) {
+    private String getMyjDownloadLocalSavePath(EtlRetailerDataSource dataSource, String day, boolean overwrite) {
         return getRetailerDataDownloadLocalSavePath(dataSource, EtlSupervisorConst.MYJ_CODE,
-                day.replaceAll("-", ""));
+                day.replaceAll("-", ""), overwrite);
+    }
+
+    private String getSevenDownloadLocalSavePath(EtlRetailerDataSource dataSource, String day, boolean overwrite) {
+        return getRetailerDataDownloadLocalSavePath(dataSource, EtlSupervisorConst.SEVEN_CODE,
+                day.replaceAll("-", ""), overwrite);
     }
 
     /**
@@ -166,6 +186,11 @@ public class FtpFileServiceImpl implements FtpFileService {
         return dataSource.getRemotePath().concat(day.replaceAll("-", ""));
     }
 
+    private String getSevenDownloadRemotePath(EtlRetailerDataSource dataSource, String day) {
+        return dataSource.getRemotePath().concat(day.replaceAll("-", ""));
+    }
+
+
     private String getRetailerDataHdfsPath(EtlRetailerDataSource dataSource, String day) {
         String hdfsRootPath = dataSource.getHdfsRootPath();
         if (StrUtil.isBlank(hdfsRootPath)) {
@@ -174,13 +199,18 @@ public class FtpFileServiceImpl implements FtpFileService {
         return hdfsRootPath.concat(day.replaceAll("-", ""));
     }
 
-    private String getRetailerDataDownloadLocalSavePath(EtlRetailerDataSource dataSource, String bannerCode, String day) {
+    private String getRetailerDataDownloadLocalSavePath(EtlRetailerDataSource dataSource, String bannerCode, String day,
+                                                        boolean overwrite) {
         String localRootPath = dataSource.getLocalRootPath();
         if (StrUtil.isBlank(localRootPath)) {
             localRootPath = System.getProperty("java.io.tmpdir");
         }
         localRootPath = localRootPath.concat(File.separator).concat(bannerCode).concat(File.separator).concat(day).concat(File.separator);
         final File localFile = new File(localRootPath);
+        if (localFile.exists() && overwrite) {
+            IoUtil.deleteDir(localRootPath);
+            localFile.mkdirs();
+        }
         if (!localFile.exists()) {
             localFile.mkdirs();
         }

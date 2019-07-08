@@ -43,13 +43,16 @@ public class EtlDownloadTaskCallbackThread {
                         try {
                             RestResponseResult result = task.get();
                             System.out.println(result.getMsg());
+                            EtlDownloadTaskThreadPool.getInstance().clearOneTask(taskId);
                             break;
                         } catch (InterruptedException | ExecutionException e) {
                             e.printStackTrace();
+                            EtlDownloadTaskThreadPool.getInstance().clearOneTask(taskId);
                             break;
                         }
                     } else if (task.isCancelled()) {
                         log.info("task {} 已经被取消！", taskId);
+                        EtlDownloadTaskThreadPool.getInstance().clearOneTask(taskId);
                         break;
                     } else {
                         //log.info("task {} 在运行！", taskId);

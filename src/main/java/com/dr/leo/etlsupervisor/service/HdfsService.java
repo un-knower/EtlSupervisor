@@ -16,8 +16,7 @@ public interface HdfsService {
      *
      * @param localFilePath 本地文件路径
      * @param hdfsFilePath  hdfs集群路径
-     * @param overwrite     是否覆盖旧有目录
      * @throws IOException 抛出异常
      */
-    void upload(String localFilePath, String hdfsFilePath, boolean overwrite) throws IOException;
+    void upload(String localFilePath, String hdfsFilePath) throws IOException;
 }
